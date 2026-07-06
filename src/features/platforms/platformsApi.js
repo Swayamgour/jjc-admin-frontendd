@@ -14,11 +14,11 @@ export const platformsApi = baseApi.injectEndpoints({
       invalidatesTags: ["Platforms"],
     }),
     updatePlatform: builder.mutation({
-      query: ({ slug, ...body }) => ({ url: `/platforms/${slug}`, method: "PUT", body }),
+      query: ({ slug, body }) => ({ url: `/platforms/${slug}`, method: "PUT", body }),
       invalidatesTags: ["Platforms"],
     }),
     togglePlatformPublish: builder.mutation({
-      query: (slug) => ({ url: `/platforms/${slug}/publish`, method: "PATCH" }),
+      query: (id) => ({ url: `/platforms/${id}/publish`, method: "PATCH" }),
       invalidatesTags: ["Platforms"],
     }),
     deletePlatform: builder.mutation({
@@ -30,6 +30,7 @@ export const platformsApi = baseApi.injectEndpoints({
 
 export const {
   useGetPlatformsQuery,
+  useGetPlatformQuery,
   useCreatePlatformMutation,
   useUpdatePlatformMutation,
   useTogglePlatformPublishMutation,

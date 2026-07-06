@@ -10,6 +10,7 @@
   flex: 1;
   margin-top: var(--topbar-h);
   padding: 24px;
+  overflow-x: hidden;
   transition: margin-left 0.22s ease;
   min-height: calc(100vh - var(--topbar-h));
   animation: fadeIn 0.2s ease;

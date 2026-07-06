@@ -15,11 +15,15 @@ export const servicesApi = baseApi.injectEndpoints({
       invalidatesTags: ["Services"],
     }),
     updateService: builder.mutation({
-      query: ({ slug, ...body }) => ({ url: `/services/${slug}`, method: "PUT", body }),
+      query: ({ slug, body }) => ({
+        url: `/services/${slug}`,
+        method: "PUT",
+        body,
+      }),
       invalidatesTags: ["Services"],
     }),
     toggleServicePublish: builder.mutation({
-      query: (slug) => ({ url: `/services/${slug}/publish`, method: "PATCH" }),
+      query: (id) => ({ url: `/services/${id}/publish`, method: "PATCH" }),
       invalidatesTags: ["Services"],
     }),
     deleteService: builder.mutation({

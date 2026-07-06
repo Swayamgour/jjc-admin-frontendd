@@ -4,12 +4,15 @@ import {
   StatusBadge, SearchBar, ConfirmDialog, Toast, EmptyState,
 } from "./UI";
 import "./UI.css";
+import { useNavigate } from "react-router-dom";
 
 export default function ContentPage({
   title, subtitle,
   useList, useCreate, useUpdate, useDelete, useToggle,
-  fields = [], columns = [], queryParams = {},
+  fields = [], columns = [], queryParams = {},navigateToCreate,navigateToEdit,
 }) {
+  
+  const navigate = useNavigate();
   const [search, setSearch]   = useState("");
   const [modal, setModal]     = useState(null);
   const [form, setForm]       = useState({});
@@ -30,7 +33,8 @@ export default function ContentPage({
   const showToast = (message, type = "success") => setToast({ message, type });
 
   const openCreate = () => { setForm({}); setModal({ mode: "create" }); };
-  const openEdit   = (item) => { setForm({ ...item }); setModal({ mode: "edit", data: item }); };
+  const openEdit = (item) => { setForm({ ...item }); setModal({ mode: "edit", data: item }); };
+  
 
   const handleSave = async () => {
     try {
@@ -85,7 +89,12 @@ export default function ContentPage({
       key: "actions", label: "", style: { width: 170 },
       render: (row) => (
         <div className="actions">
-          <Btn size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Btn>
+          {/* <Btn size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Btn> */}
+          <Btn size="sm" variant="ghost" onClick={() =>
+  navigateToEdit
+    ? navigate(`${navigateToEdit}/${row.slug}`)
+    : openEdit(row)
+}>Edit</Btn>
           <Btn size="sm" variant={row.isPublished ? "secondary" : "success"}
             onClick={() => handleToggle(row._id, row.isPublished)}>
             {row.isPublished ? "Unpublish" : "Publish"}
@@ -105,7 +114,16 @@ export default function ContentPage({
         title={title}
         subtitle={subtitle}
         action={
-          <Btn variant="primary" onClick={openCreate} icon={<PlusIcon />}>
+          // <Btn variant="primary" onClick={openCreate} icon={<PlusIcon />}>
+          //   Add {title.replace(/s$/, "")}
+          // </Btn>
+          <Btn variant="primary"
+            onClick={() =>
+              navigateToCreate
+                ? navigate(navigateToCreate)
+                : openCreate()
+              }
+            icon={<PlusIcon />}>
             Add {title.replace(/s$/, "")}
           </Btn>
         }

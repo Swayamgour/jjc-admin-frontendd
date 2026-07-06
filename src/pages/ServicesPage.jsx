@@ -44,6 +44,8 @@ export default function ServicesPage() {
       useToggle={useToggleServicePublishMutation}
       fields={FIELDS}
       columns={EXTRA_COLS}
+      navigateToCreate="/services/new"
+      navigateToEdit="/services/edit"
     />
   );
 }

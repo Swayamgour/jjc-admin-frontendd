@@ -6,6 +6,7 @@ import "./styles/globals.css";
 import Layout from "./components/layout/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import CategoriesPage from "./pages/CategoriesPage";
 import ServicesPage from "./pages/ServicesPage";
 import PlatformsPage from "./pages/PlatformsPage";
 import SolutionsPage from "./pages/SolutionsPage";
@@ -15,6 +16,9 @@ import CaseStudiesPage from "./pages/CaseStudiesPage";
 import LeadsPage from "./pages/LeadsPage";
 import FAQsPage from "./pages/FAQsPage";
 import TestimonialsPage from "./pages/TestimonialsPage";
+import ServiceFormPage from "./pages/ServiceFormPage";
+import PlatformFormPage from "./pages/PlatformFormPage";
+import IndustryFormPage from "./pages/IndustryFormPage";
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector((s) => s.auth.isAuthenticated);
@@ -39,10 +43,20 @@ function AppRoutes() {
         }
       >
         <Route index element={<Dashboard />} />
+        <Route path="categories" element={<CategoriesPage />} />
         <Route path="services" element={<ServicesPage />} />
+        <Route path="services/new" element={<ServiceFormPage />} />
+        <Route path="services/edit/:slug" element={<ServiceFormPage />} />
+        
         <Route path="platforms" element={<PlatformsPage />} />
+        <Route path="platforms/new" element={<PlatformFormPage />} />
+        <Route path="platforms/edit/:slug" element={<PlatformFormPage />} />
+        
         <Route path="solutions" element={<SolutionsPage />} />
         <Route path="industries" element={<IndustriesPage />} />
+        <Route path="industries/new" element={<IndustryFormPage />} />
+        <Route path="industries/edit/:slug" element={<IndustryFormPage  />} />
+        
         <Route path="resources" element={<ResourcesPage />} />
         <Route path="case-studies" element={<CaseStudiesPage />} />
         <Route path="leads" element={<LeadsPage />} />

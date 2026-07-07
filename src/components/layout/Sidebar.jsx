@@ -14,7 +14,7 @@ const NAV = [
       { label: "Categories", path: "/categories", icon: <TagIcon /> },
       { label: "Services", path: "/services", icon: <LayersIcon />, count: 13 },
       { label: "Platforms", path: "/platforms", icon: <CpuIcon />, count: 14 },
-      { label: "Solutions", path: "/solutions", icon: <LightbulbIcon />, count: 13 },
+      // { label: "Solutions", path: "/solutions", icon: <LightbulbIcon />, count: 13 },
       { label: "Industries", path: "/industries", icon: <BuildingIcon />, count: 9 },
     ]
   },

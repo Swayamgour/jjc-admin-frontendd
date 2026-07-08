@@ -16,25 +16,34 @@ export default function IndustryBenefitsStep({
 		});
 	};
 
-	const addListItem = () => {
-		updateSection("list", [
-			...(benefits.list || []),
-			"",
-		]);
+	const addItem = () => {
+	updateSection("items", [
+		...(benefits.items || []),
+		{
+			icon: "",
+			title: "",
+			description: "",
+		},
+	]);
+};
+
+	const updateItem = (index, key, value) => {
+	const items = [...(benefits.items || [])];
+
+	items[index] = {
+		...items[index],
+		[key]: value,
 	};
 
-	const updateListItem = (index, value) => {
-		const list = [...(benefits.list || [])];
-		list[index] = value;
-		updateSection("list", list);
-	};
+	updateSection("items", items);
+};
 
-	const removeListItem = (index) => {
-		updateSection(
-			"list",
-			benefits.list.filter((_, i) => i !== index)
-		);
-	};
+	const removeItem = (index) => {
+	updateSection(
+		"items",
+		benefits.items.filter((_, i) => i !== index)
+	);
+};
 
 	return (
 		<div>
@@ -96,33 +105,63 @@ export default function IndustryBenefitsStep({
 			<div className="dynamic-header">
 				<h3>Benefits List</h3>
 
-				<Btn onClick={addListItem}>
+				<Btn onClick={addItem}>
 					+ Add Benefit
 				</Btn>
 			</div>
 
 			<div className="dynamic-cards">
-				{(benefits.list || []).map((item, index) => (
+				{(benefits.items || []).map((item, index) => (
 					<div key={index} className="dynamic-card">
-						<Field label={`Benefit ${index + 1}`}>
-							<Textarea
-								rows={2}
-								value={item}
-								onChange={(e) =>updateListItem(index,e.target.value)}
-							/>
-						</Field>
+						<div className="form-grid">
+							<Field label="Icon">
+								<Input
+									placeholder="FaRocket"
+									value={item.icon}
+									onChange={(e) =>
+										updateItem(index, "icon", e.target.value)
+									}
+								/>
+							</Field>
 
-						<Btn variant="danger" onClick={() =>removeListItem(index)}>
+							<Field label="Title">
+								<Input
+									value={item.title}
+									onChange={(e) =>
+										updateItem(index, "title", e.target.value)
+									}
+								/>
+							</Field>
+
+							<Field label="Description" className="field-full">
+								<Textarea
+									rows={4}
+									value={item.description}
+									onChange={(e) =>
+										updateItem(
+											index,
+											"description",
+											e.target.value
+										)
+									}
+								/>
+							</Field>
+						</div>
+
+						<Btn
+							variant="danger"
+							onClick={() => removeItem(index)}
+						>
 							Remove
 						</Btn>
 					</div>
 				))}
 
-				{benefits.list?.length === 0 && (
+				{benefits.items?.length === 0 && (
 					<div className="dynamic-empty">
 						<p>No benefits added.</p>
 
-						<Btn onClick={addListItem}>
+						<Btn onClick={addItem}>
 							Add First Benefit
 						</Btn>
 					</div>

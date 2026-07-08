@@ -97,7 +97,7 @@ export default function IndustryFormPage() {
 			desc: "",
 			visualIcon: "",
 			miniIcons: [],
-			list: [],
+			items: [],
 			buttonLabel: "",
 		},
 
@@ -206,7 +206,7 @@ export default function IndustryFormPage() {
 				desc: industry.benefits?.desc || "",
 				visualIcon: industry.benefits?.visualIcon || "",
 				miniIcons: industry.benefits?.miniIcons || [],
-				list: industry.benefits?.list || [],
+				items: industry.benefits?.items || [],
 				buttonLabel: industry.benefits?.buttonLabel || "",
 			},
 

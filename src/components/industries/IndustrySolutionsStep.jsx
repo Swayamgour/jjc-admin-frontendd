@@ -135,7 +135,7 @@ export default function IndustrySolutionsStep({ form, setForm }) {
 								/>
 							</Field>
 
-							<Field label="Description">
+							<Field label="Description" className="field-full">
 								<Textarea
 									rows={4}
 									value={item.description || ""}

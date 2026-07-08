@@ -1,5 +1,16 @@
 import { Field, Input } from "../../ui/UI";
 
+const COLOR_FIELDS = [
+	{ key: "accent", label: "Accent", defaultValue: "#2563eb" },
+	{ key: "accentDark", label: "Accent Dark", defaultValue: "#1d4ed8" },
+	{ key: "accentLight", label: "Accent Light", defaultValue: "#60a5fa" },
+	{ key: "accentSoft", label: "Accent Soft", defaultValue: "#dbeafe" },
+	{ key: "heroStart", label: "Hero Start", defaultValue: "#2563eb" },
+	{ key: "heroEnd", label: "Hero End", defaultValue: "#7c3aed" },
+];
+
+const DEFAULT_RGB = "37,99,235";
+
 export default function ThemeStep({ form, setForm }) {
 	const theme = form.theme || {};
 
@@ -13,57 +24,54 @@ export default function ThemeStep({ form, setForm }) {
 		});
 	};
 
+	const rgbToHex = (rgb = DEFAULT_RGB) => {
+		const parts = rgb.split(",").map((n) => Number(n.trim()));
+
+		if (parts.length !== 3 || parts.some(Number.isNaN)) {
+			return "#2563eb";
+		}
+
+		return (
+			"#" + parts.map((n) => n.toString(16).padStart(2, "0")).join("")
+		);
+	};
+
+	const hexToRgb = (hex) => {
+		const r = parseInt(hex.slice(1, 3), 16);
+		const g = parseInt(hex.slice(3, 5), 16);
+		const b = parseInt(hex.slice(5, 7), 16);
+
+		return `${r},${g},${b}`;
+	};
+
 	return (
 		<div className="form-grid">
-			<Field label="Accent">
-				<Input
-					placeholder="#2563eb"
-					value={theme.accent || ""}
-					onChange={(e) => updateField("accent", e.target.value)}
-				/>
-			</Field>
-
-			<Field label="Accent Dark">
-				<Input
-					value={theme.accentDark || ""}
-					onChange={(e) => updateField("accentDark", e.target.value)}
-				/>
-			</Field>
-
-			<Field label="Accent Light">
-				<Input
-					value={theme.accentLight || ""}
-					onChange={(e) => updateField("accentLight", e.target.value)}
-				/>
-			</Field>
-
-			<Field label="Accent Soft">
-				<Input
-					value={theme.accentSoft || ""}
-					onChange={(e) => updateField("accentSoft", e.target.value)}
-				/>
-			</Field>
-
-			<Field label="Hero Start">
-				<Input
-					value={theme.heroStart || ""}
-					onChange={(e) => updateField("heroStart", e.target.value)}
-				/>
-			</Field>
-
-			<Field label="Hero End">
-				<Input
-					value={theme.heroEnd || ""}
-					onChange={(e) => updateField("heroEnd", e.target.value)}
-				/>
-			</Field>
+			{COLOR_FIELDS.map(({ key, label, defaultValue }) => (
+				<Field key={key} label={label}>
+					<div className="color-field">
+						<Input
+							type="color"
+							value={theme[key] || defaultValue}
+							onChange={(e) =>
+								updateField(key, e.target.value)
+							}
+						/>
+						<span>{theme[key] || defaultValue}</span>
+					</div>
+				</Field>
+			))}
 
 			<Field label="Accent RGB">
-				<Input
-					placeholder="37,99,235"
-					value={theme.accentRgb || ""}
-					onChange={(e) => updateField("accentRgb", e.target.value)}
-				/>
+				<div className="color-field">
+					<Input
+						type="color"
+						value={rgbToHex(theme.accentRgb)}
+						onChange={(e) =>
+							updateField("accentRgb", hexToRgb(e.target.value))
+						}
+					/>
+					<span>{theme.accentRgb || DEFAULT_RGB}</span>
+				</div>
 			</Field>
 		</div>
 	);

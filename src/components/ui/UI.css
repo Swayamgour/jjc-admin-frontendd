@@ -546,6 +546,43 @@
   cursor: pointer;
 }
 
+.color-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.color-field span {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+/* Color picker only */
+.color-field input[type="color"] {
+    width: 56px;
+    height: 42px;
+    padding: 2px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.color-field input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-field input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 8px;
+}
+
+.color-field input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 8px;
+}
+
 @media (max-width: 640px) {
   .input {
     padding: 10px 12px;

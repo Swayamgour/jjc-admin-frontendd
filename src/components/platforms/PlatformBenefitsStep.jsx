@@ -85,6 +85,13 @@ export default function PlatformBenefitsStep({ form, setForm }) {
 				{(benefits.items || []).map((item, index) => (
 					<div key={index} className="dynamic-card">
 						<div className="form-grid">
+							<Field label="Icon">
+								<Input
+									placeholder="FaBuilding"
+									value={item.icon}
+									onChange={(e) => updateItem(index, "icon", e.target.value)}
+								/>
+							</Field>
 							<Field label="Title">
 								<Input
 									value={item.title}
@@ -92,7 +99,7 @@ export default function PlatformBenefitsStep({ form, setForm }) {
 								/>
 							</Field>
 
-							<Field label="Description">
+							<Field label="Description" className="field-full">
 								<Textarea
 									rows={4}
 									value={item.description}

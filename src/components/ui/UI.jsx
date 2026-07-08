@@ -121,9 +121,9 @@ export function Modal({ open, onClose, title, children, width = 560 }) {
 }
 
 /* ─── Form Field ─── */
-export function Field({ label, children, required, error, hint }) {
+export function Field({ label, children, required, error, hint, className = "", }) {
   return (
-    <div className="field">
+    <div className={`field ${className}`}>
       {label && <label className="field__label">{label}{required && <span className="field__req">*</span>}</label>}
       {children}
       {hint && <span className="field__hint">{hint}</span>}

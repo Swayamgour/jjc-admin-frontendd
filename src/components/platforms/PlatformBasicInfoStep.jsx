@@ -22,7 +22,7 @@ export default function PlatformBasicInfoStep({ form, setForm, categories }) {
 				/>
 			</Field>
 
-			<Field label="Slug">
+			{/* <Field label="Slug">
 				<Input
 					value={form.slug}
 					onChange={(e) =>
@@ -32,7 +32,7 @@ export default function PlatformBasicInfoStep({ form, setForm, categories }) {
 						})
 					}
 				/>
-			</Field>
+			</Field> */}
 
 			<Field label="Short Description">
 				<Textarea

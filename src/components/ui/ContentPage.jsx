@@ -140,7 +140,18 @@ export default function ContentPage({
         <EmptyState
           title={`No ${title.toLowerCase()} yet`}
           description={`Add your first ${title.toLowerCase().replace(/s$/, "")} to get started.`}
-          action={<Btn variant="primary" onClick={openCreate}>Add Now</Btn>}
+          action={
+            <Btn
+              variant="primary"
+              onClick={() =>
+                navigateToCreate
+                  ? navigate(navigateToCreate)
+                  : openCreate()
+              }
+            >
+              Add Now
+            </Btn>
+          }
         />
       ) : (
         <Table columns={tableColumns} data={filtered} loading={isLoading} />

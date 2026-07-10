@@ -18,8 +18,10 @@ import {
 import {
 	useGetCategoriesQuery,
 	useCreateCategoryMutation,
+	useUpdateCategoryMutation,
 	useDeleteCategoryMutation,
 	useAddSubcategoryMutation,
+	 useUpdateSubcategoryMutation,
 	useDeleteSubcategoryMutation,
 } from "../features/categories/categoryApi";
 
@@ -46,14 +48,20 @@ export default function CategoriesPage() {
 	});
 
 	const [selectedCategory, setSelectedCategory] = useState(null);
+	const [editingCategory, setEditingCategory] = useState(null);
+	const [editingSubcategory, setEditingSubcategory] = useState(null);
 
 	const { data, isLoading } = useGetCategoriesQuery();
 
 	const [createCategory, { isLoading: creatingCategory }] = useCreateCategoryMutation();
+	
+	const [updateCategory, { isLoading: updatingCategory }] = useUpdateCategoryMutation();
+	
+	const [deleteCategory, { isLoading: deletingCategory }] = useDeleteCategoryMutation();
 
 	const [addSubcategory, { isLoading: creatingSubcategory }] = useAddSubcategoryMutation();
-
-	const [deleteCategory, { isLoading: deletingCategory }] = useDeleteCategoryMutation();
+	
+	const [updateSubcategory, { isLoading: updatingSubcategory }] = useUpdateSubcategoryMutation();
 
 	const [deleteSubcategory, { isLoading: deletingSubcategory }] = useDeleteSubcategoryMutation();
 
@@ -68,63 +76,121 @@ export default function CategoriesPage() {
 	const showToast = (message, type = "success") => {
 		setToast({ message, type });
 	};
-
-	const openCategoryModal = () => {
+	
+	const closeCategoryModal = () => {
+		setCategoryModal(false);
+		setEditingCategory(null);
 		setCategoryForm({
 			name: "",
 			isPublished: true,
 		});
-
-		setCategoryModal(true);
 	};
-
-	const openSubcategoryModal = (category) => {
-		setSelectedCategory(category);
-
+	
+	const closeSubcategoryModal = () => {
+		setSubcategoryModal(false);
+		setEditingSubcategory(null);
+		setSelectedCategory(null);
 		setSubcategoryForm({
 			name: "",
 			slug: "",
 		});
+	};
+
+	const openCategoryModal = (category = null) => {
+		setEditingCategory(category);
+
+		setCategoryForm({
+			name: category?.name || "",
+			isPublished: category?.isPublished ?? true,
+		});
+
+		setCategoryModal(true);
+	};
+	
+	const openSubcategoryModal = (category, subcategory = null) => {
+		setSelectedCategory(category);
+		setEditingSubcategory(subcategory);
+
+		setSubcategoryForm({
+			name: subcategory?.name || "",
+			slug: subcategory?.slug || "",
+		});
+
 		setSubcategoryModal(true);
 	};
 
-	const handleCreateCategory = async () => {
+	const handleSaveCategory = async () => {
 		try {
-			await createCategory(categoryForm).unwrap();
+			if (editingCategory) {
+				await updateCategory({
+					id: editingCategory._id,
+					...categoryForm,
+				}).unwrap();
 
-			showToast("Category created successfully");
+				showToast("Category updated successfully");
+			} else {
+				await createCategory(categoryForm).unwrap();
+
+				showToast("Category created successfully");
+			}
 
 			setCategoryModal(false);
+			setEditingCategory(null);
+			setCategoryForm({
+				name: "",
+				isPublished: true,
+			});
 		} catch (err) {
 			showToast(
-				err?.data?.message || "Failed to create category",
-				"error",
+				err?.data?.message || "Operation failed",
+				"error"
 			);
 		}
 	};
-
-	const handleCreateSubcategory = async () => {
+	
+	const handleSaveSubcategory = async () => {
 		try {
-			await addSubcategory({
-				categoryId: selectedCategory._id,
-				body: {
-					name: subcategoryForm.name,
-					slug: subcategoryForm.slug,
-				},
-			}).unwrap();
+			const categoryId = selectedCategory._id;
 
-			showToast("Subcategory created successfully");
+			if (editingSubcategory) {
+				await updateSubcategory({
+					categoryId,
+					subId: editingSubcategory._id,
+					body: {
+						name: subcategoryForm.name,
+						slug: subcategoryForm.slug,
+					},
+				}).unwrap();
 
-			setSubcategoryModal(false);
+				showToast("Subcategory updated successfully");
+			} else {
+				await addSubcategory({
+					categoryId,
+					body: {
+						name: subcategoryForm.name,
+						slug: subcategoryForm.slug,
+					},
+				}).unwrap();
+
+				showToast("Subcategory created successfully");
+			}
 
 			setExpanded((prev) => ({
 				...prev,
-				[selectedCategory._id]: true,
+				[categoryId]: true,
 			}));
+
+			setSubcategoryModal(false);
+			setEditingSubcategory(null);
+			setSelectedCategory(null);
+			setSubcategoryForm({
+				name: "",
+				slug: "",
+			});
 		} catch (err) {
 			showToast(
-				err?.data?.message || "Failed to create subcategory",
-				"error",
+				err?.data?.message || "Operation failed",
+				"error"
 			);
 		}
 	};
@@ -173,28 +239,35 @@ export default function CategoriesPage() {
 										└── {sub.name}
 									</div>
 
-									<div
-										className="slug"
-                    style={{ marginLeft: 18, fontSize: 12 }}
-									>
+									<div className="slug" style={{ marginLeft: 18, fontSize: 12 }}>
 										/{sub.slug}
 									</div>
 								</div>
 
-								<Btn
-									size="sm"
-									variant="danger"
-									onClick={() =>
-										setConfirm({
-											type: "subcategory",
-											id: sub._id,
-											categoryId: row._id,
-											name: sub.name,
-										})
-									}
-								>
-									Delete
-								</Btn>
+								<div style={{ display: "flex", gap: 8 }}>
+									<Btn
+										size="sm"
+										variant="secondary"
+										onClick={() =>openSubcategoryModal(row, sub)}
+									>
+										Edit
+									</Btn>
+								
+									<Btn
+										size="sm"
+										variant="danger"
+										onClick={() =>
+											setConfirm({
+												type: "subcategory",
+												id: sub._id,
+												categoryId: row._id,
+												name: sub.name,
+											})
+										}
+									>
+										Delete
+									</Btn>
+								</div>
 							</div>
 						))}
 				</div>
@@ -211,17 +284,13 @@ export default function CategoriesPage() {
 		{
 			key: "status",
 			label: "Status",
-			style: {
-				width: 120,
-			},
+			style: { width: 120 },			
 			render: (row) => <StatusBadge published={row.isPublished} />,
 		},
 		{
 			key: "actions",
 			label: "",
-			style: {
-				width: 280,
-			},
+			style: { width: 280 },
 			render: (row) => (
 				<div className="actions">
 					<Btn
@@ -243,6 +312,14 @@ export default function CategoriesPage() {
 						onClick={() => openSubcategoryModal(row)}
 					>
 						Add Subcategory
+					</Btn>
+					
+					<Btn
+						size="sm"
+						variant="secondary"
+						onClick={() => openCategoryModal(row)}
+					>
+						Edit
 					</Btn>
 
 					<Btn
@@ -271,7 +348,7 @@ export default function CategoriesPage() {
 				action={
 					<Btn
 						variant="primary"
-						onClick={openCategoryModal}
+						onClick={() => openCategoryModal()}
 						icon={<PlusIcon />}
 					>
 						Add Category
@@ -319,8 +396,8 @@ export default function CategoriesPage() {
 			{/* Add Category */}
 			<Modal
 				open={categoryModal}
-				onClose={() => setCategoryModal(false)}
-				title="New Category"
+				onClose={closeCategoryModal}
+				title={editingCategory ? "Edit Category" : "New Category"}
 			>
 				<Field label="Category Name" required>
 					<Input
@@ -335,25 +412,6 @@ export default function CategoriesPage() {
 					/>
 				</Field>
 
-				{/* <Field label="Display Order">
-          <Input
-            type="number"
-            value={
-              categoryForm.order
-            }
-            onChange={(e) =>
-              setCategoryForm({
-                ...categoryForm,
-                order:
-                  Number(
-                    e.target
-                      .value
-                  ),
-              })
-            }
-          />
-        </Field> */}
-
 				<div
 					style={{
 						display: "flex",
@@ -362,19 +420,16 @@ export default function CategoriesPage() {
 						marginTop: 20,
 					}}
 				>
-					<Btn
-						variant="ghost"
-						onClick={() => setCategoryModal(false)}
-					>
+					<Btn variant="ghost" onClick={closeCategoryModal}>						
 						Cancel
 					</Btn>
 
 					<Btn
 						variant="primary"
-						loading={creatingCategory}
-						onClick={handleCreateCategory}
+						loading={creatingCategory || updatingCategory}
+						onClick={handleSaveCategory}
 					>
-						Create
+					{editingCategory ? "Update" : "Create"}
 					</Btn>
 				</div>
 			</Modal>
@@ -382,8 +437,8 @@ export default function CategoriesPage() {
 			{/* Add Subcategory */}
 			<Modal
 				open={subcategoryModal}
-				onClose={() => setSubcategoryModal(false)}
-				title={`New Subcategory`}
+				onClose={closeSubcategoryModal}
+				title={editingSubcategory ? "Edit Subcategory" : "New Subcategory"}
 			>
 				<Field label="Subcategory Name" required>
 					<Input
@@ -422,19 +477,16 @@ export default function CategoriesPage() {
 						marginTop: 20,
 					}}
 				>
-					<Btn
-						variant="ghost"
-						onClick={() => setSubcategoryModal(false)}
-					>
+					<Btn variant="ghost" onClick={closeSubcategoryModal}>
 						Cancel
 					</Btn>
 
 					<Btn
 						variant="primary"
-						loading={creatingSubcategory}
-						onClick={handleCreateSubcategory}
+						loading={creatingSubcategory || updatingSubcategory}
+						onClick={handleSaveSubcategory}
 					>
-						Create
+						{editingSubcategory ? "Update" : "Create"}
 					</Btn>
 				</div>
 			</Modal>

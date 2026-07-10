@@ -5,6 +5,7 @@ export const buildIndustryFormData = (form) => {
 	formData.append("title", form.title || "");
 	formData.append("slug", form.slug || "");
 	formData.append("badge", form.badge || "");
+	formData.append("subCategory", form.subCategory || "");
 	formData.append("order", form.order || 0);
 
 	// JSON fields

@@ -4,12 +4,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PageHeader, Btn } from "../components/ui/UI";
 import "./ServiceFormPage.css";
 
+
+import { useGetCategoriesQuery } from "../features/categories/categoryApi";
+
 // Industry API
 import {
 	useCreateIndustryMutation,
 	useUpdateIndustryMutation,
 	useGetIndustryQuery,
 } from "../features/industries/industriesApi";
+
 
 // FormData builder
 import { buildIndustryFormData } from "../utils/buildIndustryFormData";
@@ -53,6 +57,7 @@ export default function IndustryFormPage() {
 		slug: "",
 		badge: "",
 		breadcrumb: [],
+		subCategory: "",
 		order: 0,
 
 		hero: {
@@ -137,6 +142,12 @@ export default function IndustryFormPage() {
 			secondaryLabel: "",
 		},
 	});
+	
+	const { data: categoriesData } = useGetCategoriesQuery();
+	
+	
+		const categories =
+			categoriesData?.data || [];
 
 	const { data: industryData, isLoading: loadingIndustry } =
 		useGetIndustryQuery(slug, {
@@ -162,6 +173,7 @@ export default function IndustryFormPage() {
 			slug: industry.slug || "",
 			badge: industry.badge || "",
 			breadcrumb: industry.breadcrumb || [],
+			subCategory: industry.subCategory || "",
 			order: industry.order || 0,
 
 			hero: {
@@ -313,7 +325,7 @@ export default function IndustryFormPage() {
 
 					<div style={{ marginTop: 30 }}>
 						{step === 0 && (
-							<IndustryBasicInfoStep form={form} setForm={setForm}/>
+							<IndustryBasicInfoStep form={form} setForm={setForm} categories={categories}/>
 						)}
 
 						{step === 1 && (

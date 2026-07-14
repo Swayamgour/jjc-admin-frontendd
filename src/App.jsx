@@ -6,6 +6,7 @@ import "./styles/globals.css";
 import Layout from "./components/layout/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import HomePageBuilder from "./pages/HomePageBuilder";
 import CategoriesPage from "./pages/CategoriesPage";
 import ServicesPage from "./pages/ServicesPage";
 import PlatformsPage from "./pages/PlatformsPage";
@@ -43,6 +44,7 @@ function AppRoutes() {
         }
       >
         <Route index element={<Dashboard />} />
+        <Route path="home-page" element={<HomePageBuilder />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="services" element={<ServicesPage />} />
         <Route path="services/new" element={<ServiceFormPage />} />

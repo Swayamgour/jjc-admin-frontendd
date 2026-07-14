@@ -1,0 +1,8 @@
+.wizard-steps {
+  flex-wrap: wrap;
+  row-gap: 24px;
+}
+
+.wizard-step-item {
+  min-width: 90px;
+}

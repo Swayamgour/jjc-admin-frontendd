@@ -18,7 +18,9 @@ const NAV = [
       // { label: "Solutions", path: "/solutions", icon: <LightbulbIcon />, count: 13 },
       { label: "Industries", path: "/industries", icon: <BuildingIcon />, count: 9 },
       
-      { label: "Contact Leads", path: "/leads", icon: <InboxIcon /> }
+      { label: "Contact Leads", path: "/leads", icon: <InboxIcon /> },
+      { label: "Blog Categories", path: "/blog-categories", icon: <FolderIcon /> },
+      { label: "Blogs", path: "/blog", icon: <BlogIcon /> },
     ]
   },
   // { section: "Resources", items: [
@@ -115,4 +117,43 @@ function ChevronIcon({ rotated }) {
 }
 function HomeIcon() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>; }
 function TagIcon() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 10L12 2H4v8l8 8 8-8z" /><circle cx="7.5" cy="7.5" r="1.5" /></svg>; }
+function FolderIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+    </svg>
+  );
+}
+function BlogIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 4h12a2 2 0 0 1 2 2v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V4z" />
+      <path d="M8 8h8" />
+      <path d="M8 12h8" />
+      <path d="M8 16h5" />
+      <path d="M5 18a2 2 0 0 0 2 2" />
+    </svg>
+  );
+}
+
+
+
 

@@ -1,0 +1,169 @@
+/* ================= Blog Form ================= */
+
+.slug {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+
+/* ================= Image Upload ================= */
+
+.blog-image-preview {
+    width: 220px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+
+.blog-upload {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    transition: .25s;
+}
+
+
+.blog-upload:hover {
+    border-color: var(--accent);
+}
+
+
+.blog-upload img {
+    width: 240px;
+    border-radius: 10px;
+}
+
+
+/* ================= Meta Section ================= */
+
+.blog-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+
+@media(max-width:768px) {
+
+    .blog-meta {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* ================= React Quill Editor ================= */
+
+
+.editor-wrapper {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-surface);
+}
+
+
+
+/* Toolbar */
+
+.editor-wrapper .ql-toolbar {
+    background: var(--bg-surface);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 12px;
+}
+
+
+
+/* Editor Area */
+
+.editor-wrapper .ql-container {
+    background: var(--bg-surface);
+    border: none;
+    color: var(--text-primary);
+    font-size: 15px;
+}
+
+
+/* Text Area */
+
+.editor-wrapper .ql-editor {
+    min-height: 320px;
+    padding: 18px;
+    color: var(--text-primary);
+    line-height: 1.7;
+}
+
+
+
+/* Placeholder */
+
+.editor-wrapper .ql-editor.ql-blank::before {
+    color: var(--text-secondary);
+    font-style: normal;
+}
+
+
+
+/* Toolbar Icons */
+
+.editor-wrapper .ql-stroke {
+    stroke: var(--text-secondary) !important;
+}
+
+.editor-wrapper .ql-fill {
+    fill: var(--text-secondary) !important;
+}
+
+
+
+/* Dropdown */
+
+.editor-wrapper .ql-picker {
+    color: var(--text-primary) !important;
+}
+
+.editor-wrapper .ql-picker-label {
+    color: var(--text-secondary) !important;
+}
+
+.editor-wrapper .ql-picker-options {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+
+
+/* Active / Hover */
+
+.editor-wrapper .ql-toolbar button:hover,
+.editor-wrapper .ql-toolbar button.ql-active {
+    background: rgba(37, 99, 235, .10);
+    border-radius: 8px;
+}
+
+
+/* Content */
+
+.editor-wrapper .ql-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.editor-wrapper .ql-editor a {
+    color: var(--accent);
+}
+
+.editor-wrapper .ql-editor pre {
+    background: var(--bg-body);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 14px;
+    border-radius: 10px;
+}

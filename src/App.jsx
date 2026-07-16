@@ -20,6 +20,9 @@ import TestimonialsPage from "./pages/TestimonialsPage";
 import ServiceFormPage from "./pages/ServiceFormPage";
 import PlatformFormPage from "./pages/PlatformFormPage";
 import IndustryFormPage from "./pages/IndustryFormPage";
+import BlogCategoriesPage from "./pages/BlogCategoriesPage";
+import BlogForm from "./pages/BlogForm";
+import BlogsPage from "./pages/BlogPage";
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector((s) => s.auth.isAuthenticated);
@@ -64,6 +67,11 @@ function AppRoutes() {
         <Route path="leads" element={<LeadsPage />} />
         <Route path="faqs" element={<FAQsPage />} />
         <Route path="testimonials" element={<TestimonialsPage />} />
+        
+        <Route path="/blog-categories" element={<BlogCategoriesPage />} />
+        <Route path="/blog" element={<BlogsPage />}/>
+        <Route path="/blog/new" element={<BlogForm />}/>
+        <Route path="/blog/edit/:id" element={<BlogForm />}/>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

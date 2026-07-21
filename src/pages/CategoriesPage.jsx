@@ -21,8 +21,11 @@ import {
 	useUpdateCategoryMutation,
 	useDeleteCategoryMutation,
 	useAddSubcategoryMutation,
-	 useUpdateSubcategoryMutation,
+	useUpdateSubcategoryMutation,
 	useDeleteSubcategoryMutation,
+	useAddItemMutation,
+	useUpdateItemMutation,
+	useDeleteItemMutation,
 } from "../features/categories/categoryApi";
 
 export default function CategoriesPage() {
@@ -31,8 +34,8 @@ export default function CategoriesPage() {
 	const [expanded, setExpanded] = useState({});
 
 	const [categoryModal, setCategoryModal] = useState(false);
-
 	const [subcategoryModal, setSubcategoryModal] = useState(false);
+	const [itemModal, setItemModal] = useState(false);
 
 	const [confirm, setConfirm] = useState(null);
 	const [toast, setToast] = useState(null);
@@ -45,54 +48,57 @@ export default function CategoriesPage() {
 	const [subcategoryForm, setSubcategoryForm] = useState({
 		name: "",
 		slug: "",
+		icon: "",
+	});
+
+	const [itemForm, setItemForm] = useState({
+		name: "",
+		slug: "",
+		icon: "",
+		description: "",
 	});
 
 	const [selectedCategory, setSelectedCategory] = useState(null);
+	const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+
 	const [editingCategory, setEditingCategory] = useState(null);
 	const [editingSubcategory, setEditingSubcategory] = useState(null);
+	const [editingItem, setEditingItem] = useState(null);
 
 	const { data, isLoading } = useGetCategoriesQuery();
 
 	const [createCategory, { isLoading: creatingCategory }] = useCreateCategoryMutation();
-	
 	const [updateCategory, { isLoading: updatingCategory }] = useUpdateCategoryMutation();
-	
 	const [deleteCategory, { isLoading: deletingCategory }] = useDeleteCategoryMutation();
 
 	const [addSubcategory, { isLoading: creatingSubcategory }] = useAddSubcategoryMutation();
-	
 	const [updateSubcategory, { isLoading: updatingSubcategory }] = useUpdateSubcategoryMutation();
-
 	const [deleteSubcategory, { isLoading: deletingSubcategory }] = useDeleteSubcategoryMutation();
+
+	const [addItem, { isLoading: creatingItem }] = useAddItemMutation();
+	const [updateItem, { isLoading: updatingItem }] = useUpdateItemMutation();
+	const [deleteItem, { isLoading: deletingItem }] = useDeleteItemMutation();
 
 	const items = data?.data || [];
 
 	const filtered = search
 		? items.filter((item) =>
-				item.name?.toLowerCase().includes(search.toLowerCase()),
-			)
+			item.name?.toLowerCase().includes(search.toLowerCase()),
+		)
 		: items;
 
 	const showToast = (message, type = "success") => {
 		setToast({ message, type });
 	};
-	
+
+	// ---------------- Category modal ----------------
+
 	const closeCategoryModal = () => {
 		setCategoryModal(false);
 		setEditingCategory(null);
 		setCategoryForm({
 			name: "",
 			isPublished: true,
-		});
-	};
-	
-	const closeSubcategoryModal = () => {
-		setSubcategoryModal(false);
-		setEditingSubcategory(null);
-		setSelectedCategory(null);
-		setSubcategoryForm({
-			name: "",
-			slug: "",
 		});
 	};
 
@@ -105,18 +111,6 @@ export default function CategoriesPage() {
 		});
 
 		setCategoryModal(true);
-	};
-	
-	const openSubcategoryModal = (category, subcategory = null) => {
-		setSelectedCategory(category);
-		setEditingSubcategory(subcategory);
-
-		setSubcategoryForm({
-			name: subcategory?.name || "",
-			slug: subcategory?.slug || "",
-		});
-
-		setSubcategoryModal(true);
 	};
 
 	const handleSaveCategory = async () => {
@@ -134,20 +128,38 @@ export default function CategoriesPage() {
 				showToast("Category created successfully");
 			}
 
-			setCategoryModal(false);
-			setEditingCategory(null);
-			setCategoryForm({
-				name: "",
-				isPublished: true,
-			});
+			closeCategoryModal();
 		} catch (err) {
-			showToast(
-				err?.data?.message || "Operation failed",
-				"error"
-			);
+			showToast(err?.data?.message || "Operation failed", "error");
 		}
 	};
-	
+
+	// ---------------- Subcategory modal ----------------
+
+	const closeSubcategoryModal = () => {
+		setSubcategoryModal(false);
+		setEditingSubcategory(null);
+		setSelectedCategory(null);
+		setSubcategoryForm({
+			name: "",
+			slug: "",
+			icon: "",
+		});
+	};
+
+	const openSubcategoryModal = (category, subcategory = null) => {
+		setSelectedCategory(category);
+		setEditingSubcategory(subcategory);
+
+		setSubcategoryForm({
+			name: subcategory?.name || "",
+			slug: subcategory?.slug || "",
+			icon: subcategory?.icon || "",
+		});
+
+		setSubcategoryModal(true);
+	};
+
 	const handleSaveSubcategory = async () => {
 		try {
 			const categoryId = selectedCategory._id;
@@ -159,6 +171,7 @@ export default function CategoriesPage() {
 					body: {
 						name: subcategoryForm.name,
 						slug: subcategoryForm.slug,
+						icon: subcategoryForm.icon,
 					},
 				}).unwrap();
 
@@ -169,6 +182,7 @@ export default function CategoriesPage() {
 					body: {
 						name: subcategoryForm.name,
 						slug: subcategoryForm.slug,
+						icon: subcategoryForm.icon,
 					},
 				}).unwrap();
 
@@ -180,20 +194,83 @@ export default function CategoriesPage() {
 				[categoryId]: true,
 			}));
 
-			setSubcategoryModal(false);
-			setEditingSubcategory(null);
-			setSelectedCategory(null);
-			setSubcategoryForm({
-				name: "",
-				slug: "",
-			});
+			closeSubcategoryModal();
 		} catch (err) {
-			showToast(
-				err?.data?.message || "Operation failed",
-				"error"
-			);
+			showToast(err?.data?.message || "Operation failed", "error");
 		}
 	};
+
+	// ---------------- Item modal ----------------
+
+	const closeItemModal = () => {
+		setItemModal(false);
+		setEditingItem(null);
+		setSelectedCategory(null);
+		setSelectedSubcategory(null);
+		setItemForm({
+			name: "",
+			slug: "",
+			icon: "",
+			description: "",
+		});
+	};
+
+	const openItemModal = (category, subcategory, item = null) => {
+		setSelectedCategory(category);
+		setSelectedSubcategory(subcategory);
+		setEditingItem(item);
+
+		setItemForm({
+			name: item?.name || "",
+			slug: item?.slug || "",
+			icon: item?.icon || "",
+			description: item?.description || "",
+		});
+
+		setItemModal(true);
+	};
+
+	const handleSaveItem = async () => {
+		try {
+			const categoryId = selectedCategory._id;
+			const subId = selectedSubcategory._id;
+
+			if (editingItem) {
+				await updateItem({
+					categoryId,
+					subId,
+					itemId: editingItem._id,
+					body: {
+						name: itemForm.name,
+						slug: itemForm.slug,
+						icon: itemForm.icon,
+						description: itemForm.description,
+					},
+				}).unwrap();
+
+				showToast("Item updated successfully");
+			} else {
+				await addItem({
+					categoryId,
+					subId,
+					body: {
+						name: itemForm.name,
+						slug: itemForm.slug,
+						icon: itemForm.icon,
+						description: itemForm.description,
+					},
+				}).unwrap();
+
+				showToast("Item created successfully");
+			}
+
+			closeItemModal();
+		} catch (err) {
+			showToast(err?.data?.message || "Operation failed", "error");
+		}
+	};
+
+	// ---------------- Delete (category / subcategory / item) ----------------
 
 	const handleDelete = async () => {
 		try {
@@ -201,13 +278,21 @@ export default function CategoriesPage() {
 				await deleteCategory(confirm.id).unwrap();
 
 				showToast("Category deleted successfully");
-			} else {
+			} else if (confirm.type === "subcategory") {
 				await deleteSubcategory({
 					categoryId: confirm.categoryId,
 					subId: confirm.id,
 				}).unwrap();
 
 				showToast("Subcategory deleted successfully");
+			} else if (confirm.type === "item") {
+				await deleteItem({
+					categoryId: confirm.categoryId,
+					subId: confirm.subId,
+					itemId: confirm.id,
+				}).unwrap();
+
+				showToast("Item deleted successfully");
 			}
 
 			setConfirm(null);
@@ -222,7 +307,7 @@ export default function CategoriesPage() {
 			label: "Category",
 			render: (row) => (
 				<div>
-					<div style={{fontWeight: 500,color: "var(--text-primary)",fontSize: 13}}>
+					<div style={{ fontWeight: 500, color: "var(--text-primary)", fontSize: 13 }}>
 						{row.name}
 					</div>
 
@@ -230,44 +315,110 @@ export default function CategoriesPage() {
 
 					{expanded[row._id] &&
 						row.subcategories?.map((sub) => (
-							<div
-								key={sub._id}
-                style={{ marginTop: 8, marginLeft: 24, display: "flex", justifyContent: "space-between", alignItems: "flex-start", }}
-							>
-								<div>
-									<div style={{ fontWeight: 500, color: "var(--text-primary)", fontSize: 13 }}>
-										└── {sub.name}
+							<div key={sub._id} style={{ marginTop: 8, marginLeft: 24 }}>
+								<div
+									style={{
+										display: "flex",
+										justifyContent: "space-between",
+										alignItems: "flex-start",
+									}}
+								>
+									<div>
+										<div style={{ fontWeight: 500, color: "var(--text-primary)", fontSize: 13 }}>
+											└── {sub.icon ? `[${sub.icon}] ` : ""}
+											{sub.name}
+										</div>
+
+										<div className="slug" style={{ marginLeft: 18, fontSize: 12 }}>
+											/{sub.slug}
+										</div>
 									</div>
 
-									<div className="slug" style={{ marginLeft: 18, fontSize: 12 }}>
-										/{sub.slug}
+									<div style={{ display: "flex", gap: 8 }}>
+										<Btn
+											size="sm"
+											variant="secondary"
+											onClick={() => openItemModal(row, sub)}
+										>
+											Add Item
+										</Btn>
+
+										<Btn
+											size="sm"
+											variant="secondary"
+											onClick={() => openSubcategoryModal(row, sub)}
+										>
+											Edit
+										</Btn>
+
+										<Btn
+											size="sm"
+											variant="danger"
+											onClick={() =>
+												setConfirm({
+													type: "subcategory",
+													id: sub._id,
+													categoryId: row._id,
+													name: sub.name,
+												})
+											}
+										>
+											Delete
+										</Btn>
 									</div>
 								</div>
 
-								<div style={{ display: "flex", gap: 8 }}>
-									<Btn
-										size="sm"
-										variant="secondary"
-										onClick={() =>openSubcategoryModal(row, sub)}
+								{sub.items?.map((item) => (
+									<div
+										key={item._id}
+										style={{
+											marginTop: 6,
+											marginLeft: 36,
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "flex-start",
+										}}
 									>
-										Edit
-									</Btn>
-								
-									<Btn
-										size="sm"
-										variant="danger"
-										onClick={() =>
-											setConfirm({
-												type: "subcategory",
-												id: sub._id,
-												categoryId: row._id,
-												name: sub.name,
-											})
-										}
-									>
-										Delete
-									</Btn>
-								</div>
+										<div>
+											<div style={{ fontWeight: 500, color: "var(--text-primary)", fontSize: 12 }}>
+												── {item.icon ? `[${item.icon}] ` : ""}
+												{item.name}
+											</div>
+
+											{item.description && (
+												<div className="slug" style={{ marginLeft: 14, fontSize: 11 }}>
+													{item.description}
+												</div>
+											)}
+										</div>
+
+										<div style={{ display: "flex", gap: 8 }}>
+											<Btn
+												size="sm"
+												variant="secondary"
+												onClick={() => openItemModal(row, sub, item)}
+											>
+												Edit
+											</Btn>
+
+											<Btn
+												size="sm"
+												variant="danger"
+												onClick={() =>
+													setConfirm({
+														type: "item",
+														id: item._id,
+														categoryId: row._id,
+														subId: sub._id,
+														name: item.name,
+													})
+												}
+											>
+												Delete
+											</Btn>
+										</div>
+									</div>
+								))}
 							</div>
 						))}
 				</div>
@@ -276,15 +427,13 @@ export default function CategoriesPage() {
 		{
 			key: "count",
 			label: "Subcategories",
-			style: {
-				width: 120,
-			},
+			style: { width: 120 },
 			render: (row) => row.subcategories?.length || 0,
 		},
 		{
 			key: "status",
 			label: "Status",
-			style: { width: 120 },			
+			style: { width: 120 },
 			render: (row) => <StatusBadge published={row.isPublished} />,
 		},
 		{
@@ -306,19 +455,11 @@ export default function CategoriesPage() {
 						{expanded[row._id] ? "Hide" : "View"}
 					</Btn>
 
-					<Btn
-						size="sm"
-						variant="secondary"
-						onClick={() => openSubcategoryModal(row)}
-					>
+					<Btn size="sm" variant="secondary" onClick={() => openSubcategoryModal(row)}>
 						Add Subcategory
 					</Btn>
-					
-					<Btn
-						size="sm"
-						variant="secondary"
-						onClick={() => openCategoryModal(row)}
-					>
+
+					<Btn size="sm" variant="secondary" onClick={() => openCategoryModal(row)}>
 						Edit
 					</Btn>
 
@@ -344,24 +485,16 @@ export default function CategoriesPage() {
 		<div>
 			<PageHeader
 				title="Categories"
-				subtitle="Manage categories and subcategories"
+				subtitle="Manage categories, subcategories and items"
 				action={
-					<Btn
-						variant="primary"
-						onClick={() => openCategoryModal()}
-						icon={<PlusIcon />}
-					>
+					<Btn variant="primary" onClick={() => openCategoryModal()} icon={<PlusIcon />}>
 						Add Category
 					</Btn>
 				}
 			/>
 
 			<div className="filters">
-				<SearchBar
-					value={search}
-					onChange={setSearch}
-					placeholder="Search categories..."
-				/>
+				<SearchBar value={search} onChange={setSearch} placeholder="Search categories..." />
 
 				<span
 					style={{
@@ -386,14 +519,10 @@ export default function CategoriesPage() {
 					}
 				/>
 			) : (
-				<Table
-					columns={tableColumns}
-					data={filtered}
-					loading={isLoading}
-				/>
+				<Table columns={tableColumns} data={filtered} loading={isLoading} />
 			)}
 
-			{/* Add Category */}
+			{/* Add/Edit Category */}
 			<Modal
 				open={categoryModal}
 				onClose={closeCategoryModal}
@@ -412,15 +541,8 @@ export default function CategoriesPage() {
 					/>
 				</Field>
 
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "flex-end",
-						gap: 8,
-						marginTop: 20,
-					}}
-				>
-					<Btn variant="ghost" onClick={closeCategoryModal}>						
+				<div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
+					<Btn variant="ghost" onClick={closeCategoryModal}>
 						Cancel
 					</Btn>
 
@@ -429,12 +551,12 @@ export default function CategoriesPage() {
 						loading={creatingCategory || updatingCategory}
 						onClick={handleSaveCategory}
 					>
-					{editingCategory ? "Update" : "Create"}
+						{editingCategory ? "Update" : "Create"}
 					</Btn>
 				</div>
 			</Modal>
 
-			{/* Add Subcategory */}
+			{/* Add/Edit Subcategory */}
 			<Modal
 				open={subcategoryModal}
 				onClose={closeSubcategoryModal}
@@ -449,14 +571,24 @@ export default function CategoriesPage() {
 								name: e.target.value,
 							}))
 						}
-						placeholder="e.g. ERP, Finance & Operations"
+						placeholder="e.g. Managed IT & Security"
 					/>
 				</Field>
 
-				<Field
-					label="Slug"
-					hint="Optional. Leave empty to auto-generate."
-				>
+				<Field label="Icon" hint="Icon name (e.g. lucide icon name like 'shield').">
+					<Input
+						value={subcategoryForm.icon}
+						onChange={(e) =>
+							setSubcategoryForm((prev) => ({
+								...prev,
+								icon: e.target.value,
+							}))
+						}
+						placeholder="e.g. shield"
+					/>
+				</Field>
+
+				<Field label="Slug" hint="Optional. Leave empty to auto-generate.">
 					<Input
 						value={subcategoryForm.slug}
 						onChange={(e) =>
@@ -465,18 +597,11 @@ export default function CategoriesPage() {
 								slug: e.target.value,
 							}))
 						}
-						placeholder="e.g. microsoft-erp"
+						placeholder="e.g. managed-it-security"
 					/>
 				</Field>
 
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "flex-end",
-						gap: 8,
-						marginTop: 20,
-					}}
-				>
+				<div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
 					<Btn variant="ghost" onClick={closeSubcategoryModal}>
 						Cancel
 					</Btn>
@@ -491,28 +616,97 @@ export default function CategoriesPage() {
 				</div>
 			</Modal>
 
+			{/* Add/Edit Item */}
+			<Modal
+				open={itemModal}
+				onClose={closeItemModal}
+				title={editingItem ? "Edit Item" : "New Item"}
+			>
+				<Field label="Item Name" required>
+					<Input
+						value={itemForm.name}
+						onChange={(e) =>
+							setItemForm((prev) => ({
+								...prev,
+								name: e.target.value,
+							}))
+						}
+						placeholder="e.g. IT Strategy & Consulting"
+					/>
+				</Field>
+
+				<Field label="Icon" hint="Icon name (e.g. lucide icon name like 'compass').">
+					<Input
+						value={itemForm.icon}
+						onChange={(e) =>
+							setItemForm((prev) => ({
+								...prev,
+								icon: e.target.value,
+							}))
+						}
+						placeholder="e.g. compass"
+					/>
+				</Field>
+
+				<Field label="Description">
+					<Input
+						value={itemForm.description}
+						onChange={(e) =>
+							setItemForm((prev) => ({
+								...prev,
+								description: e.target.value,
+							}))
+						}
+						placeholder="Short description"
+					/>
+				</Field>
+
+				<Field label="Slug" hint="Optional. Leave empty to auto-generate.">
+					<Input
+						value={itemForm.slug}
+						onChange={(e) =>
+							setItemForm((prev) => ({
+								...prev,
+								slug: e.target.value,
+							}))
+						}
+						placeholder="e.g. it-strategy-consulting"
+					/>
+				</Field>
+
+				<div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
+					<Btn variant="ghost" onClick={closeItemModal}>
+						Cancel
+					</Btn>
+
+					<Btn
+						variant="primary"
+						loading={creatingItem || updatingItem}
+						onClick={handleSaveItem}
+					>
+						{editingItem ? "Update" : "Create"}
+					</Btn>
+				</div>
+			</Modal>
+
 			<ConfirmDialog
 				open={!!confirm}
 				onClose={() => setConfirm(null)}
 				onConfirm={handleDelete}
-				loading={deletingCategory || deletingSubcategory}
+				loading={deletingCategory || deletingSubcategory || deletingItem}
 				title="Delete Entry"
 				message={`Are you sure you want to delete "${confirm?.name}"? This cannot be undone.`}
 			/>
 
 			{toast && (
-				<Toast
-					message={toast.message}
-					type={toast.type}
-					onClose={() => setToast(null)}
-				/>
+				<Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
 			)}
 		</div>
 	);
 }
 
 const PlusIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-  </svg>
+	<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+		<line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+	</svg>
 );

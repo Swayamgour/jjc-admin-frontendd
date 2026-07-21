@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PageHeader, Btn } from "../components/ui/UI";
 import "./ServiceFormPage.css";
 
-import { useGetCategoriesQuery } from "../features/categories/categoryApi";
+import { useGetAllItemByCategoryQuery } from "../features/categories/categoryApi";
 
 import {
 	useCreateServiceMutation,
@@ -284,7 +284,7 @@ export default function ServiceFormPage() {
 
 
 
-	const { data: categoriesData } = useGetCategoriesQuery();
+	const { data: categoriesData } = useGetAllItemByCategoryQuery('services');
 
 
 	const categories =

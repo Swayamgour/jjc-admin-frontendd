@@ -9,23 +9,23 @@ import { useNavigate } from "react-router-dom";
 export default function ContentPage({
   title, subtitle,
   useList, useCreate, useUpdate, useDelete, useToggle,
-  fields = [], columns = [], queryParams = {},navigateToCreate,navigateToEdit,
+  fields = [], columns = [], queryParams = {}, navigateToCreate, navigateToEdit,
 }) {
-  
-  const navigate = useNavigate();
-  const [search, setSearch]   = useState("");
-  const [modal, setModal]     = useState(null);
-  const [form, setForm]       = useState({});
-  const [confirm, setConfirm] = useState(null);
-  const [toast, setToast]     = useState(null);
 
-  const { data, isLoading }            = useList(queryParams);
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [modal, setModal] = useState(null);
+  const [form, setForm] = useState({});
+  const [confirm, setConfirm] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const { data, isLoading } = useList(queryParams);
   const [create, { isLoading: creating }] = useCreate();
   const [update, { isLoading: updating }] = useUpdate();
   const [remove, { isLoading: removing }] = useDelete();
-  const [toggle]                          = useToggle();
+  const [toggle] = useToggle();
 
-  const items   = data?.data || [];
+  const items = data?.data || [];
   const filtered = search
     ? items.filter((i) => i.title?.toLowerCase().includes(search.toLowerCase()))
     : items;
@@ -34,7 +34,7 @@ export default function ContentPage({
 
   const openCreate = () => { setForm({}); setModal({ mode: "create" }); };
   const openEdit = (item) => { setForm({ ...item }); setModal({ mode: "edit", data: item }); };
-  
+
 
   const handleSave = async () => {
     try {
@@ -91,10 +91,10 @@ export default function ContentPage({
         <div className="actions">
           {/* <Btn size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Btn> */}
           <Btn size="sm" variant="ghost" onClick={() =>
-  navigateToEdit
-    ? navigate(`${navigateToEdit}/${row.slug}`)
-    : openEdit(row)
-}>Edit</Btn>
+            navigateToEdit
+              ? navigate(`${navigateToEdit}/${row.slug}`)
+              : openEdit(row)
+          }>Edit</Btn>
           <Btn size="sm" variant={row.isPublished ? "secondary" : "success"}
             onClick={() => handleToggle(row._id, row.isPublished)}>
             {row.isPublished ? "Unpublish" : "Publish"}
@@ -122,7 +122,7 @@ export default function ContentPage({
               navigateToCreate
                 ? navigate(navigateToCreate)
                 : openCreate()
-              }
+            }
             icon={<PlusIcon />}>
             Add {title.replace(/s$/, "")}
           </Btn>
@@ -223,6 +223,6 @@ function FormFields({ fields, form, setForm }) {
 
 const PlusIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
   </svg>
 );

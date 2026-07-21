@@ -7,14 +7,13 @@ export default function IndustryBasicInfoStep({ form, setForm, categories }) {
 			[field]: value,
 		});
 	};
-	
-	const INDUSTRY_CATEGORY_ID = "6a4fae97576c11c147a9fef9";
-	
-	const industryCategory = categories.find(
-		(cat) => cat._id === INDUSTRY_CATEGORY_ID
-	);
 
-	const subcategories = industryCategory?.subcategories || [];
+	// `categories` yahan ab already flattened items array hai
+	// (backend ke /industries/items endpoint se aata hai —
+	// {name, slug, icon, description, order, _id} objects ki
+	// flat list), isliye seedha ise hi Sub Category options
+	// ke liye use karo — koi .find() ya .subcategories nahi.
+	const subcategories = categories || [];
 
 	return (
 		<div className="step-content">
@@ -57,7 +56,7 @@ export default function IndustryBasicInfoStep({ form, setForm, categories }) {
 					}
 				/>
 			</Field>
-			
+
 			{/* New Sub Category Field */}
 			<Field label="Sub Category">
 				<Select

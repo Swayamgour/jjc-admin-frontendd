@@ -5,7 +5,7 @@ import { PageHeader, Btn } from "../components/ui/UI";
 import "./ServiceFormPage.css";
 
 // Categories
-import { useGetCategoriesQuery } from "../features/categories/categoryApi";
+import { useGetAllItemByCategoryQuery } from "../features/categories/categoryApi";
 
 // Platform API
 import {
@@ -155,7 +155,7 @@ export default function PlatformFormPage() {
 			skip: !isEdit,
 		});
 
-	const { data: categoriesData } = useGetCategoriesQuery();
+	const { data: categoriesData } = useGetAllItemByCategoryQuery('platforms');
 
 	const categories = categoriesData?.data || [];
 

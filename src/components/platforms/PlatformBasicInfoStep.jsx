@@ -1,9 +1,12 @@
 import { Field, Input, Textarea, Select } from "../ui/UI";
 
 export default function PlatformBasicInfoStep({ form, setForm, categories }) {
-	const subCategories = (
-		categories.find((c) => c.name === "Platforms")?.subcategories || []
-	).map((sub) => ({
+	// `categories` yahan ab already flattened items array hai
+	// (backend ke /platforms/items endpoint se aata hai —
+	// {name, slug, icon, description, order, _id} objects ki
+	// flat list), isliye seedha ise hi Sub Category options
+	// ke liye use karo — koi .find() ya .subcategories nahi.
+	const subCategories = (categories || []).map((sub) => ({
 		value: sub._id.toString(),
 		label: sub.name,
 	}));

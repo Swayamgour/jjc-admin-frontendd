@@ -1,29 +1,19 @@
 import { Field, Input, Textarea, Select } from "../ui/UI";
 
-
 export default function BasicInfoStep({
 	form,
 	setForm,
 	categories
 }) {
 
-
-	const selectedCategory =
-		categories.find(
-			(c) => c._id === form.category
-		);
-
-
-
-	const subcategories =
-		selectedCategory?.subcategories || [];
-
-
-
+	// `categories` yahan ab already flattened items array hai
+	// (backend ke /items endpoint se aata hai — {name, slug,
+	// icon, description, order, _id} objects ki flat list),
+	// isliye seedha ise hi Sub Category options ke liye use karo.
+	const subcategories = categories || [];
 
 
 	const updateOverview = (field, value) => {
-
 
 		setForm({
 
@@ -39,17 +29,11 @@ export default function BasicInfoStep({
 
 		});
 
-
 	};
-
-
-
 
 	return (
 
 		<div className="form-grid">
-
-
 
 			<Field label="Service Title" required>
 
@@ -75,9 +59,6 @@ export default function BasicInfoStep({
 				/>
 
 			</Field>
-
-
-
 
 
 			<Field label="Badge">
@@ -106,10 +87,6 @@ export default function BasicInfoStep({
 
 
 			</Field>
-
-
-
-
 
 
 			<Field label="Short Description" required>
@@ -142,12 +119,7 @@ export default function BasicInfoStep({
 			</Field>
 
 
-
-
-
-
 			{/* ================= OVERVIEW ================ */}
-
 
 
 			<Field label="Overview Tag">
@@ -174,10 +146,6 @@ export default function BasicInfoStep({
 			</Field>
 
 
-
-
-
-
 			<Field label="Overview Title">
 
 
@@ -200,11 +168,6 @@ export default function BasicInfoStep({
 			</Field>
 
 
-
-
-
-
-
 			<Field label="Brand Label">
 
 
@@ -225,12 +188,6 @@ export default function BasicInfoStep({
 
 
 			</Field>
-
-
-
-
-
-
 
 
 			<Field label="Overview Paragraphs">
@@ -268,12 +225,6 @@ export default function BasicInfoStep({
 			</Field>
 
 
-
-
-
-
-
-
 			<Field label="Checklist">
 
 
@@ -309,13 +260,6 @@ export default function BasicInfoStep({
 			</Field>
 
 
-
-
-
-
-
-
-
 			<Field label="Order">
 
 
@@ -345,90 +289,12 @@ export default function BasicInfoStep({
 			</Field>
 
 
-
-
-
-
-
-
-			<Field label="Category">
+			<Field label="Sub Category" required>
 
 
 				<Select
-
-					value={form.category}
-
-
-					onChange={(e) =>
-
-						setForm({
-
-							...form,
-
-							category: e.target.value,
-
-							subCategory: ""
-
-						})
-
-					}
-
-				>
-
-
-					<option value="">
-						Select Category
-					</option>
-
-
-					{
-
-						categories.map((cat) => (
-
-
-							<option
-
-								key={cat._id}
-
-								value={cat._id}
-
-							>
-
-
-								{cat.name}
-
-
-							</option>
-
-
-						))
-
-					}
-
-
-				</Select>
-
-
-			</Field>
-
-
-
-
-
-
-
-
-			<Field label="Sub Category">
-
-
-				<Select
-
 
 					value={form.subCategory}
-
-
-					disabled={!form.category}
-
 
 					onChange={(e) =>
 
@@ -445,21 +311,14 @@ export default function BasicInfoStep({
 				>
 
 
-
 					<option value="">
-
 						Select Subcategory
-
 					</option>
-
-
-
 
 
 					{
 
 						subcategories.map((sub) => (
-
 
 
 							<option
@@ -482,13 +341,10 @@ export default function BasicInfoStep({
 					}
 
 
-
 				</Select>
 
 
 			</Field>
-
-
 
 
 		</div>

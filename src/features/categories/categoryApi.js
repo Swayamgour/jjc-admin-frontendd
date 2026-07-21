@@ -16,6 +16,13 @@ export const categoryApi = baseApi.injectEndpoints({
       ],
     }),
 
+    getAllItemByCategory: builder.query({
+      query: (slug) => `/categories/${slug}/items`,
+      providesTags: (result, error, slug) => [
+        { type: "Categories", id: slug },
+      ],
+    }),
+
     // Create category
     createCategory: builder.mutation({
       query: (body) => ({
@@ -73,11 +80,41 @@ export const categoryApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Categories"],
     }),
+
+    // Add item (level 3)
+    addItem: builder.mutation({
+      query: ({ categoryId, subId, body }) => ({
+        url: `/categories/${categoryId}/subcategories/${subId}/items`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+
+    // Update item (level 3)
+    updateItem: builder.mutation({
+      query: ({ categoryId, subId, itemId, body }) => ({
+        url: `/categories/${categoryId}/subcategories/${subId}/items/${itemId}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+
+    // Delete item (level 3)
+    deleteItem: builder.mutation({
+      query: ({ categoryId, subId, itemId }) => ({
+        url: `/categories/${categoryId}/subcategories/${subId}/items/${itemId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Categories"],
+    }),
   }),
 });
 
 export const {
   useGetCategoriesQuery,
+  useGetAllItemByCategoryQuery,
   useGetCategoryQuery,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
@@ -85,4 +122,7 @@ export const {
   useAddSubcategoryMutation,
   useUpdateSubcategoryMutation,
   useDeleteSubcategoryMutation,
+  useAddItemMutation,
+  useUpdateItemMutation,
+  useDeleteItemMutation,
 } = categoryApi;

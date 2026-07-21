@@ -5,7 +5,7 @@ import { PageHeader, Btn } from "../components/ui/UI";
 import "./ServiceFormPage.css";
 
 
-import { useGetCategoriesQuery } from "../features/categories/categoryApi";
+import { useGetAllItemByCategoryQuery } from "../features/categories/categoryApi";
 
 // Industry API
 import {
@@ -143,7 +143,7 @@ export default function IndustryFormPage() {
 		},
 	});
 	
-	const { data: categoriesData } = useGetCategoriesQuery();
+	const { data: categoriesData } = useGetAllItemByCategoryQuery('industries');
 	
 	
 		const categories =

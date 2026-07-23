@@ -52,6 +52,7 @@ export default function ServiceFormPage() {
 
 		"Basic Info",
 		"Hero",
+		"Overview",
 		"Challenges",
 		"Service Scope",
 		"Platforms",

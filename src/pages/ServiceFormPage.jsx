@@ -22,6 +22,7 @@ import DeliveryProcessStep from "../components/services/DeliveryProcessStep";
 import IndustryExamplesStep from "../components/services/IndustryExamplesStep";
 import FaqStep from "../components/services/FaqStep";
 import SeoStep from "../components/shared/sections/SeoStep";
+import OverviewStep from "../components/shared/sections/OverviewStep";
 
 
 
@@ -583,229 +584,118 @@ export default function ServiceFormPage() {
 
 
 
-						{
-							step === 2 &&
+						{step === 2 && (
+							<OverviewStep
+								form={form}
+								setForm={setForm}
+							/>
+						)}
 
+						{step === 3 && (
 							<DynamicCardStep
-
 								title="Challenges"
-
 								section={form.challenges}
-
 								onChange={(v) =>
-
 									setForm({
 										...form,
-										challenges: v
+										challenges: v,
 									})
-
 								}
-
 							/>
+						)}
 
-						}
-
-
-
-
-						{
-							step === 3 &&
-
+						{step === 4 && (
 							<DynamicCardStep
-
 								title="Service Scope"
-
 								section={form.serviceScope}
-
 								onChange={(v) =>
-
 									setForm({
 										...form,
-										serviceScope: v
+										serviceScope: v,
 									})
-
 								}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-
-						{
-							step === 4 &&
-
+						{step === 5 && (
 							<DynamicCardStep
-
 								title="Platforms"
-
 								section={form.relatedPlatforms}
-
 								onChange={(v) =>
-
 									setForm({
 										...form,
-										relatedPlatforms: v
+										relatedPlatforms: v,
 									})
-
 								}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-						{
-							step === 5 &&
-
+						{step === 6 && (
 							<DeliveryProcessStep
-
 								form={form}
-
 								setForm={setForm}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-
-						{
-							step === 6 &&
-
+						{step === 7 && (
 							<IndustryExamplesStep
-
 								form={form}
-
 								setForm={setForm}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-						{
-							step === 7 &&
-
+						{step === 8 && (
 							<DynamicCardStep
-
 								title="Cost Factors"
-
 								section={form.costFactors}
-
 								onChange={(v) =>
-
 									setForm({
 										...form,
-										costFactors: v
+										costFactors: v,
 									})
-
 								}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-						{
-							step === 8 &&
-
+						{step === 9 && (
 							<DynamicCardStep
-
 								title="Benefits"
-
 								section={form.benefits}
-
 								onChange={(v) =>
-
 									setForm({
 										...form,
-										benefits: v
+										benefits: v,
 									})
-
 								}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-						{
-							step === 9 &&
-
+						{step === 10 && (
 							<FaqStep
-
 								form={form}
-
 								setForm={setForm}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-
-						{
-							step === 10 &&
-
+						{step === 11 && (
 							<DynamicCardStep
-
 								title="Case Studies"
-
 								section={form.caseStudies}
-
 								onChange={(v) =>
-
 									setForm({
 										...form,
-										caseStudies: v
+										caseStudies: v,
 									})
-
 								}
-
 							/>
+						)}
 
-						}
-
-
-
-
-
-						{
-							step === 11 &&
-
-
+						{step === 12 && (
 							<SeoStep
-
 								form={form}
-
 								setForm={setForm}
-
 							/>
-
-
-						}
+						)}
 
 
 

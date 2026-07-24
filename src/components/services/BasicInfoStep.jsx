@@ -88,6 +88,21 @@ export default function BasicInfoStep({
 
 			</Field>
 
+			<Field label="Slug" required>
+				<Input
+					value={form.slug}
+					onChange={(e) =>
+						setForm({
+							...form,
+							slug: e.target.value
+								.toLowerCase()
+								.replace(/\s+/g, "-")
+								.replace(/[^a-z0-9-]/g, "")
+						})
+					}
+					placeholder="microsoft-365-consulting"
+				/>
+			</Field>
 
 			<Field label="Short Description" required>
 

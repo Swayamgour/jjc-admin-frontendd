@@ -9,6 +9,7 @@ import {
   useUpdateCaseStudyMutation, useDeleteCaseStudyMutation,
   useToggleCaseStudyPublishMutation,
 } from "../features/caseStudies/caseStudiesApi";
+import { useNavigate } from "react-router-dom";
 
 const EMPTY = { title: "", clientName: "", industry: "", challenge: "", solution: "", technologies: "", testimonialQuote: "", testimonialPerson: "" };
 
@@ -48,6 +49,8 @@ export default function CaseStudiesPage() {
     catch { showToast("Delete failed", "error"); }
   };
 
+  const navigate = useNavigate()
+
   const columns = [
     {
       key: "title", label: "Title",
@@ -66,7 +69,9 @@ export default function CaseStudiesPage() {
       key: "actions", label: "", style: { width: 160 },
       render: (row) => (
         <div className="actions">
-          <Btn size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Btn>
+          {/* <Btn size="sm" variant="ghost" onClick={() => (row)}>Edit</Btn> */}
+          <Btn size="sm" variant="ghost" onClick={() => navigate(`/case-studies/edit/${row?.slug}`)}>Edit</Btn>
+
           <Btn size="sm" variant={row.isPublished ? "secondary" : "success"} onClick={() => toggle(row._id)}>{row.isPublished ? "Unpublish" : "Publish"}</Btn>
           <Btn size="sm" variant="danger" onClick={() => setConfirm({ slug: row.slug, title: row.title })}>Del</Btn>
         </div>
@@ -74,16 +79,18 @@ export default function CaseStudiesPage() {
     },
   ];
 
+
+
   return (
     <div>
       <PageHeader title="Case Studies" subtitle="Real client results — approved evidence only"
-        action={<Btn variant="primary" onClick={openCreate} icon={<PlusIcon />}>Add Case Study</Btn>} />
+        action={<Btn variant="primary" onClick={() => navigate('/case-studies/new')} icon={<PlusIcon />}>Add Case Study</Btn>} />
 
-      <div className="filters" style={{ marginBottom: 12 }}>
+      {/* <div className="filters" style={{ marginBottom: 12 }}>
         <div style={{ background: "var(--yellow-muted)", border: "1px solid rgba(245,158,11,.2)", borderRadius: "var(--radius-sm)", padding: "7px 12px", fontSize: 12, color: "var(--yellow)", display: "flex", alignItems: "center", gap: 6 }}>
           <span>⚠</span> Blueprint rule: Only publish case studies with client approval and real, supportable evidence.
         </div>
-      </div>
+      </div> */}
 
       <div className="filters">
         <SearchBar value={search} onChange={setSearch} placeholder="Search by title or client…" />

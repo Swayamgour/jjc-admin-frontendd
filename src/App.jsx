@@ -23,6 +23,8 @@ import IndustryFormPage from "./pages/IndustryFormPage";
 import BlogCategoriesPage from "./pages/BlogCategoriesPage";
 import BlogForm from "./pages/BlogForm";
 import BlogsPage from "./pages/BlogPage";
+import CaseStudyFormPage from './pages/CaseStudyFormPage'
+import CaseStudyCategoriesPage from "./pages/CaseStudyCategoriesPage";
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector((s) => s.auth.isAuthenticated);
@@ -52,26 +54,30 @@ function AppRoutes() {
         <Route path="services" element={<ServicesPage />} />
         <Route path="services/new" element={<ServiceFormPage />} />
         <Route path="services/edit/:slug" element={<ServiceFormPage />} />
-        
+
         <Route path="platforms" element={<PlatformsPage />} />
         <Route path="platforms/new" element={<PlatformFormPage />} />
         <Route path="platforms/edit/:slug" element={<PlatformFormPage />} />
-        
+
         <Route path="solutions" element={<SolutionsPage />} />
         <Route path="industries" element={<IndustriesPage />} />
         <Route path="industries/new" element={<IndustryFormPage />} />
-        <Route path="industries/edit/:slug" element={<IndustryFormPage  />} />
-        
+        <Route path="industries/edit/:slug" element={<IndustryFormPage />} />
+
         <Route path="resources" element={<ResourcesPage />} />
         <Route path="case-studies" element={<CaseStudiesPage />} />
+        <Route path="case-studies/new" element={<CaseStudyFormPage />} />
+        <Route path="case-studies/edit/:slug" element={<CaseStudyFormPage />} />
+        <Route path="case-study-categories" element={<CaseStudyCategoriesPage />} />
+        {/* <Route path="case-studies" element={<CaseStudiesPage />} /> */}
         <Route path="leads" element={<LeadsPage />} />
         <Route path="faqs" element={<FAQsPage />} />
         <Route path="testimonials" element={<TestimonialsPage />} />
-        
+
         <Route path="/blog-categories" element={<BlogCategoriesPage />} />
-        <Route path="/blog" element={<BlogsPage />}/>
-        <Route path="/blog/new" element={<BlogForm />}/>
-        <Route path="/blog/edit/:id" element={<BlogForm />}/>
+        <Route path="/blog" element={<BlogsPage />} />
+        <Route path="/blog/new" element={<BlogForm />} />
+        <Route path="/blog/edit/:id" element={<BlogForm />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -14,7 +14,7 @@ export const baseApi = createApi({
   }),
   tagTypes: [
     "Services", "Platforms", "Solutions", "Industries",
-    "Resources", "CaseStudies", "Leads", "FAQs", "Testimonials",
+    "Resources", "CaseStudies", "CaseStudyCategories", "Leads", "FAQs", "Testimonials",
     "Stats", "Nav", "HomeHero", "HomeSections",
   ],
   endpoints: () => ({}),

@@ -17,7 +17,8 @@ const NAV = [
       { label: "Platforms", path: "/platforms", icon: <CpuIcon />, count: 14 },
       // { label: "Solutions", path: "/solutions", icon: <LightbulbIcon />, count: 13 },
       { label: "Industries", path: "/industries", icon: <BuildingIcon />, count: 9 },
-      
+
+
       { label: "Contact Leads", path: "/leads", icon: <InboxIcon /> },
       { label: "Blog Categories", path: "/blog-categories", icon: <FolderIcon /> },
       { label: "Blogs", path: "/blog", icon: <BlogIcon /> },
@@ -29,9 +30,12 @@ const NAV = [
   //   { label: "Testimonials",   path: "/testimonials", icon: <StarIcon />     },
   //   { label: "FAQs",           path: "/faqs",         icon: <HelpIcon />     },
   // ]},
-  // { section: "CRM", items: [
-  //   { label: "Contact Leads", path: "/leads", icon: <InboxIcon />, badge: true },
-  // ]},
+  {
+    section: "CRM", items: [
+      { label: "Case Study Categories", path: "/case-study-categories", icon: <TagIcon /> },
+      { label: "Case Studies", path: "/case-studies", icon: <TrophyIcon /> },
+    ]
+  },
 ];
 
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
@@ -153,7 +157,3 @@ function BlogIcon() {
     </svg>
   );
 }
-
-
-
-

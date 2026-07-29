@@ -16,6 +16,23 @@ export function Btn({ children, variant = "primary", size = "md", loading, icon,
   );
 }
 
+
+// Add this export to your UI.js file
+export function Checkbox({ checked, onChange, label, disabled }) {
+  return (
+    <label className="checkbox-wrapper">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        disabled={disabled}
+        className="checkbox-input"
+      />
+      {label && <span className="checkbox-label">{label}</span>}
+    </label>
+  );
+}
+
 /* ─── Badge ─── */
 export function Badge({ children, color = "default" }) {
   return <span className={`badge badge--${color}`}>{children}</span>;
@@ -110,7 +127,7 @@ export function Modal({ open, onClose, title, children, width = 560 }) {
           <h3 className="modal__title">{title}</h3>
           <button className="modal__close" onClick={onClose}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
@@ -173,7 +190,7 @@ export function SearchBar({ value, onChange, placeholder = "Search..." }) {
   return (
     <div className="search-bar">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
       </svg>
       <input
         className="search-bar__input"
@@ -191,8 +208,8 @@ export function EmptyState({ title, description, action }) {
     <div className="empty-state">
       <div className="empty-state__icon">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-          <polyline points="13 2 13 9 20 9"/>
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+          <polyline points="13 2 13 9 20 9" />
         </svg>
       </div>
       <h3 className="empty-state__title">{title}</h3>

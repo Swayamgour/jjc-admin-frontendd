@@ -12,6 +12,8 @@ export default function ContentPage({
   fields = [], columns = [], queryParams = {}, navigateToCreate, navigateToEdit,
 }) {
 
+  console.log( navigateToEdit)
+
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [modal, setModal] = useState(null);
@@ -89,12 +91,14 @@ export default function ContentPage({
       key: "actions", label: "", style: { width: 170 },
       render: (row) => (
         <div className="actions">
+          {console.log(navigateToEdit, row.slug)}
           {/* <Btn size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Btn> */}
-          <Btn size="sm" variant="ghost" onClick={() =>
-            navigateToEdit
-              ? navigate(`${navigateToEdit}/${row.slug}`)
-              : openEdit(row)
-          }>Edit</Btn>
+          <Btn size="sm" variant="ghost"
+            onClick={() =>
+              navigateToEdit
+                ? navigate(`${navigateToEdit}/${row.slug}`)
+                : openEdit(row)
+            }>Edit</Btn>
           <Btn size="sm" variant={row.isPublished ? "secondary" : "success"}
             onClick={() => handleToggle(row._id, row.isPublished)}>
             {row.isPublished ? "Unpublish" : "Publish"}

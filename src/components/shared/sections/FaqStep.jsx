@@ -1,104 +1,101 @@
-import { Btn, Field, Input, Textarea } from "../../ui/UI";
+import { Btn, Field, Input, Textarea } from "../components/ui/UI";
 
 export default function FaqStep({ form, setForm }) {
-	const faqs = form.faqs || {};
+  const faqs = form.faqs || { tag: "", title: "", subtitle: "", items: [] };
+  const items = faqs.items || [];
 
-	const updateSection = (key, value) => {
-		setForm({
-			...form,
-			faqs: {
-				...faqs,
-				[key]: value,
-			},
-		});
-	};
+  const updateFaq = (field, value) => {
+    setForm({ ...form, faqs: { ...faqs, [field]: value } });
+  };
 
-	const addFaq = () => {
-		updateSection("items", [
-			...(faqs.items || []),
-			{
-				question: "",
-				answer: "",
-			},
-		]);
-	};
+  const addItem = () => {
+    setForm({
+      ...form,
+      faqs: {
+        ...faqs,
+        items: [...items, { question: "", answer: "" }],
+      },
+    });
+  };
 
-	const updateFaq = (index, key, value) => {
-		const items = [...(faqs.items || [])];
+  const updateItem = (index, field, value) => {
+    const updated = [...items];
+    updated[index] = { ...updated[index], [field]: value };
+    setForm({ ...form, faqs: { ...faqs, items: updated } });
+  };
 
-		items[index] = {
-			...items[index],
-			[key]: value,
-		};
+  const removeItem = (index) => {
+    setForm({
+      ...form,
+      faqs: { ...faqs, items: items.filter((_, i) => i !== index) },
+    });
+  };
 
-		updateSection("items", items);
-	};
+  return (
+    <div>
+      <div className="form-grid">
+        <Field label="FAQ Tag">
+          <Input
+            value={faqs.tag || ""}
+            onChange={(e) => updateFaq("tag", e.target.value)}
+            placeholder="FAQs"
+          />
+        </Field>
 
-	const removeFaq = (index) => {
-		updateSection(
-			"items",
-			(faqs.items || []).filter((_, i) => i !== index),
-		);
-	};
+        <Field label="FAQ Title">
+          <Input
+            value={faqs.title || ""}
+            onChange={(e) => updateFaq("title", e.target.value)}
+            placeholder="Frequently Asked Questions"
+          />
+        </Field>
 
-	return (
-		<div>
-			<div className="form-grid">
-				<Field label="Section Tag">
-					<Input
-						value={faqs.tag || ""}
-						onChange={(e) => updateSection("tag", e.target.value)}
-					/>
-				</Field>
+        <Field label="FAQ Subtitle">
+          <Input
+            value={faqs.subtitle || ""}
+            onChange={(e) => updateFaq("subtitle", e.target.value)}
+          />
+        </Field>
+      </div>
 
-				<Field label="Section Title">
-					<Input
-						value={faqs.title || ""}
-						onChange={(e) => updateSection("title", e.target.value)}
-					/>
-				</Field>
-			</div>
+      <div className="dynamic-header">
+        <h3>FAQ Items</h3>
+        <Btn type="button" onClick={addItem}>Add</Btn>
+      </div>
 
-			<div className="dynamic-header">
-				<h3>FAQs</h3>
+      <div className="dynamic-cards">
+        {items.length === 0 ? (
+          <div className="dynamic-empty">
+            <p>No FAQs added.</p>
+            <Btn type="button" onClick={addItem}>Add FAQ</Btn>
+          </div>
+        ) : (
+          items.map((item, index) => (
+            <div key={index} className="dynamic-card">
+              <Field label="Question">
+                <Input
+                  value={item.question || ""}
+                  onChange={(e) => updateItem(index, "question", e.target.value)}
+                  placeholder="Frequently asked question"
+                />
+              </Field>
 
-				<Btn onClick={addFaq}>+ Add FAQ</Btn>
-			</div>
+              <Field label="Answer">
+                <Textarea
+                  rows={4}
+                  value={item.answer || ""}
+                  onChange={(e) => updateItem(index, "answer", e.target.value)}
+                  placeholder="Answer to the question"
+                />
+              </Field>
 
-			<div className="dynamic-cards">
-				{(faqs.items || []).map((faq, index) => (
-					<div key={index} className="dynamic-card">
-						<div className="form-grid">
-							<Field label="Question">
-								<Input
-									value={faq.question || ""}
-                  onChange={(e) => updateFaq(index, "question", e.target.value)}
-								/>
-							</Field>
-
-							<Field label="Answer">
-								<Textarea
-									rows={5}
-									value={faq.answer || ""}
-									onChange={(e) =>  updateFaq(index, "answer", e.target.value)}
-								/>
-							</Field>
-						</div>
-
-						<Btn variant="danger" onClick={() => removeFaq(index)}>
-							Remove FAQ
-						</Btn>
-					</div>
-				))}
-
-				{(!faqs.items || faqs.items.length === 0) && (
-					<div className="dynamic-empty">
-						<p>No FAQs added.</p>
-
-						<Btn onClick={addFaq}>Add First FAQ</Btn>
-					</div>
-				)}
-			</div>
-		</div>
-	);
+              <Btn variant="danger" type="button" onClick={() => removeItem(index)}>
+                Remove
+              </Btn>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 }

@@ -6,6 +6,7 @@ export const baseApi = createApi({
     // baseUrl: "https://jjc-backend-new-two.onrender.com/api",
     // baseUrl: "https://jjc.admin.amaxjobs.com/api",
     baseUrl: "https://jjc-backend-2.onrender.com/api",
+    // baseUrl: "http://localhost:5008/api",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) headers.set("Authorization", `Bearer ${token}`);

@@ -1,6 +1,14 @@
-import { Btn, Input } from "../ui/UI";
+import { Btn, Input, Textarea } from "../ui/UI";
 
-export default function StringListEditor({ items = [], onChange, placeholder, addLabel = "+ Add Item", emptyLabel = "No items yet." }) {
+export default function StringListEditor({
+  items = [],
+  onChange,
+  placeholder,
+  addLabel = "+ Add Item",
+  emptyLabel = "No items yet.",
+  multiline = false,
+  rows = 3,
+}) {
   const addRow = () => onChange([...(items || []), ""]);
   const updateRow = (index, value) => {
     const next = [...(items || [])];
@@ -12,8 +20,12 @@ export default function StringListEditor({ items = [], onChange, placeholder, ad
   return (
     <div>
       {(items || []).map((item, index) => (
-        <div key={index} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
-          <Input value={item} onChange={(e) => updateRow(index, e.target.value)} placeholder={placeholder} />
+        <div key={index} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: multiline ? "flex-start" : "center" }}>
+          {multiline ? (
+            <Textarea rows={rows} value={item} onChange={(e) => updateRow(index, e.target.value)} placeholder={placeholder} />
+          ) : (
+            <Input value={item} onChange={(e) => updateRow(index, e.target.value)} placeholder={placeholder} />
+          )}
           <Btn size="sm" variant="danger" onClick={() => removeRow(index)}>Remove</Btn>
         </div>
       ))}

@@ -1,54 +1,77 @@
-export const buildCaseStudyFormData = (form) => {
-  const formData = new FormData();
+// Matches backend controllers/caseStudyController.js JSON_FIELDS exactly.
+// Anything NOT in this list is sent as a plain string field.
+const JSON_FIELDS = [
+  "heroStats",
+  "glanceItems",
+  "situation",
+  "approachText",
+  "outcomes",
+  "products",
+  "platforms",
+  "transfers",
+  "sourcing",
+  "org",
+  "seoKeywords",
+];
 
-  // simple fields
-  formData.append("title", form.title || "");
-  formData.append("description", form.description || "");
-  formData.append("sourceType", form.sourceType || "industry");
-  formData.append("parentSlug", form.parent || "");
-  formData.append("ctaLabel", form.ctaLabel || "");
-  formData.append("ctaLink", form.ctaLink || "");
+/**
+ * Builds the multipart/form-data payload the backend expects for
+ * POST /case-studies and PUT /case-studies/:id.
+ *
+ * `form` should carry: title, sourceType, parentSlug, description,
+ * industryTag, capabilityTag, isGap, gapNote, org, heroEyebrow, heroLede,
+ * heroStats, glanceItems, situation, approachText, resultsHeading,
+ * resultsLede, outcomes, products, platforms, transfers, sourcing,
+ * status, heroImage (File | {url,publicId} | null),
+ * gallery (File[] | {url,publicId}[])
+ */
+export function buildCaseStudyFormData(form) {
+  const fd = new FormData();
 
-  // JSON fields
-  formData.append("techBadges", JSON.stringify(form.techBadges || []));
-  formData.append("heroStats", JSON.stringify(form.heroStats || []));
-  formData.append("clientInfo", JSON.stringify(form.clientInfo || []));
-  formData.append("overview", JSON.stringify(form.overview || {}));
-  formData.append("challenge", JSON.stringify(form.challenge || {}));
-  formData.append("solution", JSON.stringify(form.solution || {}));
-  formData.append("approach", JSON.stringify(form.approach || {}));
-  formData.append("results", JSON.stringify(form.results || {}));
-  formData.append("technologies", JSON.stringify(form.technologies || {}));
-  formData.append("beforeAfter", JSON.stringify(form.beforeAfter || {}));
-  formData.append("faqs", JSON.stringify(form.faqs || []));
-  formData.append("resources", JSON.stringify(form.resources || {}));
+  const PLAIN_FIELDS = [
+    "title",
+    "sourceType",
+    "description",
+    "industryTag",
+    "capabilityTag",
+    "isGap",
+    "gapNote",
+    "heroEyebrow",
+    "heroLede",
+    "resultsHeading",
+    "resultsLede",
+    "status",
+  ];
 
-  // testimonial — strip the image (sent as a file separately if new)
-  formData.append(
-    "testimonial",
-    JSON.stringify({
-      ...form.testimonial,
-      image: form.testimonial?.image instanceof File ? undefined : form.testimonial?.image,
-    })
-  );
+  PLAIN_FIELDS.forEach((key) => {
+    const value = form[key];
+    if (value === undefined || value === null) return;
+    fd.append(key, typeof value === "boolean" ? String(value) : value);
+  });
 
-  // hero image
+  // The Basic Info step stores the selected category under `form.parent`
+  // (it's the <Select> value, populated with each category's slug) — the
+  // backend expects that same value under the `parentSlug` field.
+  if (form.parent) {
+    fd.append("parentSlug", form.parent);
+  }
+
+  JSON_FIELDS.forEach((key) => {
+    const value = form[key];
+    if (value === undefined || value === null) return;
+    fd.append(key, JSON.stringify(value));
+  });
+
+  // Hero image: only append if the user picked a NEW file.
+  // (An existing {url, publicId} object means "keep as is" — leave it out.)
   if (form.heroImage instanceof File) {
-    formData.append("heroImage", form.heroImage);
+    fd.append("heroImage", form.heroImage);
   }
 
-  // testimonial image
-  if (form.testimonial?.image instanceof File) {
-    formData.append("testimonialImage", form.testimonial.image);
-  }
+  // Gallery: backend REPLACES the whole gallery array whenever new files are
+  // uploaded, so only send files here when the user is adding/replacing images.
+  const newGalleryFiles = (form.gallery || []).filter((item) => item instanceof File);
+  newGalleryFiles.forEach((file) => fd.append("galleryImages", file));
 
-  // gallery — split into kept-existing (already-uploaded objects) vs new files
-  const gallery = form.gallery || [];
-  const existingGallery = gallery.filter((g) => !(g instanceof File));
-  const newGalleryFiles = gallery.filter((g) => g instanceof File);
-
-  formData.append("existingGallery", JSON.stringify(existingGallery));
-  newGalleryFiles.forEach((file) => formData.append("galleryImages", file));
-
-  return formData;
-};
+  return fd;
+}

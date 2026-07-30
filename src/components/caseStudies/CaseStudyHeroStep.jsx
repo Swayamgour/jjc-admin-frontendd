@@ -1,14 +1,19 @@
-import { Field, Input } from "../ui/UI";
+import { Field, Input, Textarea } from "../ui/UI";
 import RepeaterEditor from "./RepeaterEditor";
 
 export default function CaseStudyHeroStep({ form, setForm }) {
   const set = (key, value) => setForm({ ...form, [key]: value });
 
-  const setBadges = (value) =>
-    set("techBadges", value ? value.split(",").map((v) => v.trim()).filter(Boolean) : []);
-
   return (
     <div className="step-content">
+      <Field label="Hero Eyebrow" hint="e.g. 'Healthcare · Modern Work & Automation'">
+        <Input value={form.heroEyebrow || ""} onChange={(e) => set("heroEyebrow", e.target.value)} placeholder="Healthcare · Modern Work & Automation" />
+      </Field>
+
+      <Field label="Hero Lede" required hint="The paragraph under the H1 — also reused as the case-card preview text">
+        <Textarea rows={3} value={form.heroLede || ""} onChange={(e) => set("heroLede", e.target.value)} placeholder="Medical records arrived from a wide variety of providers..." />
+      </Field>
+
       <Field label="Hero Image">
         <input
           type="file"
@@ -27,26 +32,17 @@ export default function CaseStudyHeroStep({ form, setForm }) {
         )}
       </Field>
 
-      <Field label="Tech Badges (comma separated)" hint="e.g. Microsoft 365, Azure, SharePoint, Power BI">
-        <Input
-          value={(form.techBadges || []).join(", ")}
-          onChange={(e) => setBadges(e.target.value)}
-          placeholder="Microsoft 365, Azure, SharePoint, Power BI"
-        />
-      </Field>
-
       <RepeaterEditor
-        cardTitle="Hero Stats"
+        cardTitle="Stats (max 4 — shown on the card and on the story's stats strip)"
         items={form.heroStats}
-        onChange={(v) => set("heroStats", v)}
-        emptyItem={{ icon: "", value: "", label: "" }}
+        onChange={(v) => set("heroStats", v.slice(0, 4))}
+        emptyItem={{ value: "", label: "" }}
         fields={[
-          { key: "icon", label: "Icon", placeholder: "Smile" },
-          { key: "value", label: "Value", placeholder: "98%" },
-          { key: "label", label: "Label", placeholder: "Client Satisfaction" },
+          { key: "value", label: "Value", placeholder: "20M" },
+          { key: "label", label: "Label", placeholder: "Records processed per year" },
         ]}
         addLabel="+ Add Stat"
-        emptyLabel="No hero stats added."
+        emptyLabel="No stats added."
       />
     </div>
   );

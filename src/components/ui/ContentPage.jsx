@@ -91,7 +91,8 @@ export default function ContentPage({
       key: "actions", label: "", style: { width: 170 },
       render: (row) => (
         <div className="actions">
-          {console.log(navigateToEdit, row.slug)}
+          {/* {console.log(row?.parent?.)} */}
+          {/* {console.log(navigateToEdit, row.slug)} */}
           {/* <Btn size="sm" variant="ghost" onClick={() => openEdit(row)}>Edit</Btn> */}
           <Btn size="sm" variant="ghost"
             onClick={() =>

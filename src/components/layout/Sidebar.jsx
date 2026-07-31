@@ -34,6 +34,7 @@ const NAV = [
     section: "CRM", items: [
       { label: "Case Study Categories", path: "/case-study-categories", icon: <TagIcon /> },
       { label: "Case Studies", path: "/case-studies", icon: <TrophyIcon /> },
+      { label: "Case Study Stories", path: "/case-study-stories", icon: <FileTextIcon /> },
     ]
   },
 ];

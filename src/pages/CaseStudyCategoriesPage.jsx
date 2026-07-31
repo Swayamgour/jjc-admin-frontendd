@@ -14,6 +14,7 @@ import {
 const EMPTY = {
   name: "",
   type: "industry",
+  slug: "",
   icon: "",
   theme: {
     accent: "#2563eb",
@@ -115,6 +116,13 @@ export default function CaseStudyCategoriesPage() {
     },
   ];
 
+  const slugify = (text) =>
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "");
+
   return (
     <div>
       <PageHeader
@@ -159,7 +167,23 @@ export default function CaseStudyCategoriesPage() {
       >
         <div className="grid-2">
           <Field label="Name" required>
-            <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Healthcare" />
+            {/* <Input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Healthcare" /> */}
+            <Input
+              value={form.name}
+              onChange={(e) => {
+                set("name", e.target.value);
+                set("slug", slugify(e.target.value));
+              }}
+            />
+          </Field>
+          <Field label="Slug">
+            <Input
+              value={form.slug}
+              onChange={(e) => set("slug", e.target.value)}
+              placeholder="healthcare"
+            />
+
+
           </Field>
           <Field label="Type" required>
             <Select value={form.type} onChange={(e) => set("type", e.target.value)}>
@@ -176,6 +200,7 @@ export default function CaseStudyCategoriesPage() {
         <Field label="Theme Colors">
           <div className="grid-2">
             <Input value={form.theme.accent} onChange={(e) => setTheme("accent", e.target.value)} placeholder="Accent #hex" />
+
             <Input value={form.theme.accentDark} onChange={(e) => setTheme("accentDark", e.target.value)} placeholder="Accent Dark #hex" />
             <Input value={form.theme.accentLight} onChange={(e) => setTheme("accentLight", e.target.value)} placeholder="Accent Light #hex" />
             <Input value={form.theme.accentSoft} onChange={(e) => setTheme("accentSoft", e.target.value)} placeholder="Accent Soft rgba(...)" />

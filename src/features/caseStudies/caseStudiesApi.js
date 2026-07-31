@@ -37,7 +37,7 @@ export const caseStudiesApi = baseApi.injectEndpoints({
     // fetches the full document via GET /:id. No backend change required.
     getCaseStudyBySlugAdmin: b.query({
       async queryFn(slug, _api, _extra, baseQuery) {
-        const listRes = await baseQuery({ url: "/case-studies", params: {} });
+        const listRes = await baseQuery({ url: `/case-studies/slug/${slug}`, params: {} });
         if (listRes.error) return { error: listRes.error };
 
         const match = (listRes.data?.data || []).find((c) => c.slug === slug);

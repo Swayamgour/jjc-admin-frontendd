@@ -13,72 +13,64 @@ import {
 
 import { buildCaseStudyFormData } from "../utils/buildCaseStudyFormData";
 
-import CaseStudyBasicInfoStep from "../components/caseStudies/CaseStudyBasicInfoStep";
-import CaseStudyHeroStep from "../components/caseStudies/CaseStudyHeroStep";
-import CaseStudyGlanceStep from "../components/caseStudies/CaseStudyGlanceStep";
-import CaseStudyTextBlockStep from "../components/caseStudies/CaseStudyTextBlockStep";
-import CaseStudyResultsStep from "../components/caseStudies/CaseStudyResultsStep";
-import CaseStudyPlatformsStep from "../components/caseStudies/CaseStudyPlatformsStep";
-import CaseStudyTransfersStep from "../components/caseStudies/CaseStudyTransfersStep";
-import CaseStudySourcingStep from "../components/caseStudies/CaseStudySourcingStep";
-import CaseStudyGalleryStep from "../components/caseStudies/CaseStudyGalleryStep";
+import PageBasicInfoStep from "../components/caseStudies/page/PageBasicInfoStep";
+import PageHeroSectionStep from "../components/caseStudies/page/PageHeroSectionStep";
+import PageSuccessStoriesStep from "../components/caseStudies/page/PageSuccessStoriesStep";
+import PageRelatedCapabilitiesStep from "../components/caseStudies/page/PageRelatedCapabilitiesStep";
+import PageCtaSeoStep from "../components/caseStudies/page/PageCtaSeoStep";
 
 const EMPTY_FORM = {
-  title: "",
+  name: "",
   sourceType: "industry",
-  parent: "",
-  description: "",
-  industryTag: "",
-  capabilityTag: "",
-  isGap: false,
-  gapNote: "",
-  org: { name: "", region: "" },
-
-  heroEyebrow: "",
-  heroLede: "",
+  parentSlug: "",
+  status: "published",
   heroImage: null,
-  heroStats: [],
 
-  glanceItems: [],
-
-  situation: { intro: "", body: "" },
-  approachText: { intro: "", body: "" },
-
-  resultsHeading: "What was published",
-  resultsLede: "",
-  outcomes: [],
-
-  products: [],
-  platforms: [],
-
-  transfers: {
-    intro: "",
-    noteIcon: "i-target",
-    noteTitle: "Where it usually gets harder than expected:",
-    noteBody: "",
-    approachHeading: "",
-    steps: [],
+  heroSection: {
+    breadcrumb: [],
+    eyebrow: "",
+    title: "",
+    description: "",
+    buttons: [],
+    glance: { title: "", items: [] },
+    stats: [],
   },
 
-  sourcing: { paragraphs: [], shortNote: "" },
+  successStories: {
+    eyebrow: "",
+    title: "",
+    description: "",
+    stories: [],
+    disclaimer: { title: "", description: "" },
+  },
 
-  seoKeywords: [],
+  relatedCapabilities: {
+    eyebrow: "",
+    title: "",
+    items: [],
+  },
 
-  gallery: [],
-  status: "published",
+  ctaSection: {
+    title: "",
+    description: "",
+    buttons: [],
+    note: "",
+  },
+
+  seo: {
+    metaTitle: "",
+    metaDescription: "",
+    keywords: [],
+    canonicalUrl: "",
+  },
 };
 
 const STEPS = [
   "Basic Info",
-  "Hero",
-  "At a Glance",
-  "The Situation",
-  "What Was Done",
-  "Results",
-  "Platforms",
-  "What Transfers",
-  "Sourcing",
-  "Gallery",
+  "Hero Section",
+  "Success Stories",
+  "Related Capabilities",
+  "CTA & SEO",
 ];
 
 export default function CaseStudyFormPage() {
@@ -91,6 +83,8 @@ export default function CaseStudyFormPage() {
 
   const { data: categoriesData } = useGetCaseStudyCategoriesQuery();
   const categories = categoriesData?.data || [];
+
+  // console.log(slug)
 
   // Admin lookup — returns the raw doc regardless of published/draft status
   const {
@@ -111,46 +105,43 @@ export default function CaseStudyFormPage() {
     const cs = caseStudyData.data;
 
     setForm({
-      title: cs.title || "",
+      name: cs.name || "",
       sourceType: cs.sourceType || "industry",
-      parent: cs.parent?.slug || cs.parent?._id || "",
-      description: cs.description || "",
-      industryTag: cs.industryTag || "",
-      capabilityTag: cs.capabilityTag || "",
-      isGap: cs.isGap || false,
-      gapNote: cs.gapNote || "",
-      org: { ...EMPTY_FORM.org, ...cs.org },
-
-      heroEyebrow: cs.heroEyebrow || "",
-      heroLede: cs.heroLede || "",
-      heroImage: cs.heroImage || null,
-      heroStats: cs.heroStats || [],
-
-      glanceItems: cs.glanceItems || [],
-
-      situation: { ...EMPTY_FORM.situation, ...cs.situation },
-      approachText: { ...EMPTY_FORM.approachText, ...cs.approachText },
-
-      resultsHeading: cs.resultsHeading || EMPTY_FORM.resultsHeading,
-      resultsLede: cs.resultsLede || "",
-      outcomes: cs.outcomes || [],
-
-      products: cs.products || [],
-      platforms: cs.platforms || [],
-
-      transfers: { ...EMPTY_FORM.transfers, ...cs.transfers },
-
-      sourcing: { ...EMPTY_FORM.sourcing, ...cs.sourcing },
-
-      seoKeywords: cs.seoKeywords || [],
-
-      gallery: cs.gallery || [],
+      parentSlug: cs.parent?.slug || "",
       status: cs.status || "published",
+      heroImage: cs.heroImage || null,
+
+      heroSection: {
+        ...EMPTY_FORM.heroSection,
+        ...cs.heroSection,
+        glance: { ...EMPTY_FORM.heroSection.glance, ...cs.heroSection?.glance },
+      },
+
+      successStories: {
+        ...EMPTY_FORM.successStories,
+        ...cs.successStories,
+        disclaimer: { ...EMPTY_FORM.successStories.disclaimer, ...cs.successStories?.disclaimer },
+      },
+
+      relatedCapabilities: { ...EMPTY_FORM.relatedCapabilities, ...cs.relatedCapabilities },
+      ctaSection: { ...EMPTY_FORM.ctaSection, ...cs.ctaSection },
+      seo: { ...EMPTY_FORM.seo, ...cs.seo },
     });
   }, [caseStudyData]);
 
   // Handle form submission (Create or Update)
   const handleSubmit = async () => {
+    if (!form.name) {
+      alert("Name is required.");
+      setStep(0);
+      return;
+    }
+    if (!form.parentSlug) {
+      alert("Please select a parent category.");
+      setStep(0);
+      return;
+    }
+
     try {
       const formData = buildCaseStudyFormData(form);
 
@@ -190,6 +181,8 @@ export default function CaseStudyFormPage() {
     );
   }
 
+  console.log(isEdit, fetchError)
+
   if (isEdit && fetchError) {
     return (
       <div className="error-container" style={{ padding: "40px", textAlign: "center" }}>
@@ -204,7 +197,7 @@ export default function CaseStudyFormPage() {
     <div>
       <PageHeader
         title={isEdit ? "Edit Case Study" : "Create Case Study"}
-        subtitle={isEdit ? "Update case study details" : "Add a new case study to your portfolio"}
+        subtitle={isEdit ? "Update case study details" : "Add a new case study listing page"}
       />
 
       <div className="wizard">
@@ -222,36 +215,11 @@ export default function CaseStudyFormPage() {
           <h2 className="wizard-title">Step {step + 1}: {STEPS[step]}</h2>
 
           <div style={{ marginTop: 30 }}>
-            {step === 0 && <CaseStudyBasicInfoStep form={form} setForm={setForm} categories={categories} disabled={isLoading} />}
-            {step === 1 && <CaseStudyHeroStep form={form} setForm={setForm} disabled={isLoading} />}
-            {step === 2 && <CaseStudyGlanceStep form={form} setForm={setForm} disabled={isLoading} />}
-            {step === 3 && (
-              <CaseStudyTextBlockStep
-                form={form}
-                setForm={setForm}
-                sectionKey="situation"
-                introLabel="Situation — Intro"
-                bodyLabel="Situation — Expanded"
-                introPlaceholder="Medical records arrived from a wide variety of providers in inconsistent formats..."
-                bodyPlaceholder="Records processing is the sort of work that never appears on a strategy slide..."
-              />
-            )}
-            {step === 4 && (
-              <CaseStudyTextBlockStep
-                form={form}
-                setForm={setForm}
-                sectionKey="approachText"
-                introLabel="What Was Done — Intro"
-                bodyLabel="What Was Done — Expanded"
-                introPlaceholder="The DevOps team automated intake and processing with Power Automate..."
-                bodyPlaceholder="The scale here is what makes it notable..."
-              />
-            )}
-            {step === 5 && <CaseStudyResultsStep form={form} setForm={setForm} disabled={isLoading} />}
-            {step === 6 && <CaseStudyPlatformsStep form={form} setForm={setForm} disabled={isLoading} />}
-            {step === 7 && <CaseStudyTransfersStep form={form} setForm={setForm} disabled={isLoading} />}
-            {step === 8 && <CaseStudySourcingStep form={form} setForm={setForm} disabled={isLoading} />}
-            {step === 9 && <CaseStudyGalleryStep form={form} setForm={setForm} disabled={isLoading} />}
+            {step === 0 && <PageBasicInfoStep form={form} setForm={setForm} categories={categories} disabled={isLoading} />}
+            {step === 1 && <PageHeroSectionStep form={form} setForm={setForm} disabled={isLoading} />}
+            {step === 2 && <PageSuccessStoriesStep form={form} setForm={setForm} disabled={isLoading} />}
+            {step === 3 && <PageRelatedCapabilitiesStep form={form} setForm={setForm} disabled={isLoading} />}
+            {step === 4 && <PageCtaSeoStep form={form} setForm={setForm} disabled={isLoading} />}
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40 }}>

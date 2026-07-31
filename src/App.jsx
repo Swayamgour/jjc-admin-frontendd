@@ -25,6 +25,8 @@ import BlogForm from "./pages/BlogForm";
 import BlogsPage from "./pages/BlogPage";
 import CaseStudyFormPage from './pages/CaseStudyFormPage'
 import CaseStudyCategoriesPage from "./pages/CaseStudyCategoriesPage";
+import CaseStudyStoriesPage from "./pages/CaseStudyStoriesPage";
+import CaseStudyStoryFormPage from "./pages/CaseStudyStoryFormPage";
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector((s) => s.auth.isAuthenticated);
@@ -69,6 +71,9 @@ function AppRoutes() {
         <Route path="case-studies/new" element={<CaseStudyFormPage />} />
         <Route path="case-studies/edit/:slug" element={<CaseStudyFormPage />} />
         <Route path="case-study-categories" element={<CaseStudyCategoriesPage />} />
+        <Route path="case-study-stories" element={<CaseStudyStoriesPage />} />
+        <Route path="case-study-stories/new" element={<CaseStudyStoryFormPage />} />
+        <Route path="case-study-stories/edit/:slug" element={<CaseStudyStoryFormPage />} />
         {/* <Route path="case-studies" element={<CaseStudiesPage />} /> */}
         <Route path="leads" element={<LeadsPage />} />
         <Route path="faqs" element={<FAQsPage />} />

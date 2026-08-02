@@ -1,60 +1,56 @@
 import { baseApi } from "../../app/baseApi";
 
 export const blogApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-
-    getBlogs: builder.query({
-      query: () => "/blog",
-      providesTags: ["Blogs"],
+  endpoints: (b) => ({
+    // GET /api/blog?all=true — admin list (includes drafts)
+    getBlogs: b.query({
+      query: (p = {}) => ({ url: "/blog", params: { limit: 100, all: true, ...p } }),
+      providesTags: (result) =>
+        result?.data
+          ? [...result.data.map((p) => ({ type: "Blogs", id: p._id })), { type: "Blogs", id: "LIST" }]
+          : [{ type: "Blogs", id: "LIST" }],
     }),
 
-    getBlog: builder.query({
+    // GET /api/blog/filters
+    getBlogFilters: b.query({
+      query: () => "/blog/filters",
+      providesTags: [{ type: "Blogs", id: "FILTERS" }],
+    }),
+
+    // GET /api/blog/id/:id — admin edit form (protected, includes drafts)
+    getBlogById: b.query({
       query: (id) => `/blog/id/${id}`,
-      providesTags: ["Blogs"],
+      providesTags: (result, error, id) => [{ type: "Blogs", id }],
     }),
 
-    createBlog: builder.mutation({
-      query: (body) => ({
-        url: "/blog",
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: ["Blogs"],
+    // POST /api/blog
+    createBlog: b.mutation({
+      query: (body) => ({ url: "/blog", method: "POST", body }),
+      invalidatesTags: [{ type: "Blogs", id: "LIST" }],
     }),
 
-    updateBlog: builder.mutation({
-      query: ({ id, body }) => ({
-        url: `/blog/${id}`,
-        method: "PUT",
-        body,
-      }),
-      invalidatesTags: ["Blogs"],
+    // PUT /api/blog/:id
+    updateBlog: b.mutation({
+      query: ({ id, ...body }) => ({ url: `/blog/${id}`, method: "PUT", body }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Blogs", id },
+        { type: "Blogs", id: "LIST" },
+      ],
     }),
 
-    deleteBlog: builder.mutation({
-      query: (id) => ({
-        url: `/blog/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Blogs"],
+    // DELETE /api/blog/:id
+    deleteBlog: b.mutation({
+      query: (id) => ({ url: `/blog/${id}`, method: "DELETE" }),
+      invalidatesTags: [{ type: "Blogs", id: "LIST" }],
     }),
-
-    toggleBlogStatus: builder.mutation({
-      query: (id) => ({
-        url: `/blog/${id}/status`,
-        method: "PATCH",
-      }),
-      invalidatesTags: ["Blogs"],
-    }),
-
   }),
 });
 
 export const {
   useGetBlogsQuery,
-  useGetBlogQuery,
+  useGetBlogFiltersQuery,
+  useGetBlogByIdQuery,
   useCreateBlogMutation,
   useUpdateBlogMutation,
   useDeleteBlogMutation,
-  useToggleBlogStatusMutation,
 } = blogApi;

@@ -2,126 +2,139 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { PageHeader, Btn } from "../components/ui/UI";
-import "./BlogForm.css"; 
+import "./ServiceFormPage.css";
 
-import { useGetBlogCategoriesQuery } from "../features/blogCategories/blogCategoryApi";
-import { useCreateBlogMutation, useUpdateBlogMutation, useGetBlogQuery } from "../features/blogs/blogApi";
+import {
+  useCreateBlogMutation,
+  useUpdateBlogMutation,
+  useGetBlogByIdQuery,
+} from "../features/blogs/blogApi";
 
-import { buildBlogFormData } from "../utils/buildBlogFormData";
-import BlogBasicInfo from "../components/blogs/BlogBasicInfo";
+import BlogBasicInfoStep from "../components/blogs/steps/BlogBasicInfoStep";
+import BlogHeroStep from "../components/blogs/steps/BlogHeroStep";
+import BlogContentStep from "../components/blogs/steps/BlogContentStep";
+import BlogSeoStep from "../components/blogs/steps/BlogSeoStep";
 
-export default function BlogFormPage() {
+const EMPTY_FORM = {
+  title: "", slug: "", description: "", content: "",
+  platform: "", service: "", industry: "", type: "", icon: "chart",
+  readTime: "", publishedAt: "",
+
+  eyebrow: "", takeaways: [],
+  ctaPrimary: { text: "Talk to us about this", link: "/contact" },
+  ctaSecondary: { text: "More insights", link: "/blog" },
+  breadcrumb: { parent: "Insights", parentLink: "/blog", current: "" },
+
+  isPublished: true, author: "JJC Systems", seoTitle: "", seoDescription: "",
+};
+
+const STEPS = ["Basic Info", "Hero", "Content", "SEO"];
+
+export default function BlogForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
-
   const navigate = useNavigate();
-  
-  const [form, setForm] = useState({
-    title: "",
-    slug: "",
-    category: "",
 
-    description: "",
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState(EMPTY_FORM);
 
-    image: null,
-    imageAlt: "",
-
-    blogDate: "",
-
-    metaTitle: "",
-    metaDescription: "",
-    metaKeywords: "",
-
-    status: "draft",
-  });
-  
-  const { data: blogData, isLoading: loadingBlog } = useGetBlogQuery(id, {skip: !isEdit,});
-
-  const { data: categoryData } = useGetBlogCategoriesQuery();
-
-  const categories =categoryData?.data || [];
+  const { data: blogData, isLoading: loadingBlog, error: fetchError } = useGetBlogByIdQuery(id, { skip: !isEdit });
 
   const [createBlog, { isLoading: creating }] = useCreateBlogMutation();
   const [updateBlog, { isLoading: updating }] = useUpdateBlogMutation();
 
   useEffect(() => {
     if (!blogData?.data) return;
-
-    const blog = blogData.data;
-
-    setForm({
-      title: blog.title || "",
-      slug: blog.slug || "",
-
-      category: blog.category?._id || blog.category || "",
-
-      description: blog.description || "",
-
-      image: blog.image || null,
-      imageAlt: blog.imageAlt || "",
-
-      blogDate: blog.blogDate
-        ? blog.blogDate.slice(0, 10)
-        : "",
-
-      metaTitle: blog.metaTitle || "",
-      metaDescription: blog.metaDescription || "",
-      metaKeywords: blog.metaKeywords || "",
-
-      status: blog.status || "draft",
-    });
+    const p = blogData.data;
+    setForm({ ...EMPTY_FORM, ...p, publishedAt: p.publishedAt ? p.publishedAt.slice(0, 10) : "" });
   }, [blogData]);
 
   const handleSubmit = async () => {
-    try{
-      const formData = buildBlogFormData(form);
-      
-      if(isEdit){
-          await updateBlog({
-              id,
-              body: formData,
-          }).unwrap();
+    if (!form.title || !form.description || !form.platform || !form.service || !form.industry || !form.type) {
+      alert("Title, Description, Platform, Service, Industry and Type are required.");
+      setStep(0);
+      return;
+    }
+    try {
+      const body = { ...form };
+      if (!body.publishedAt) delete body.publishedAt;
 
-          alert("Blog updated");
-      }else{
-        await createBlog(formData).unwrap();
-        alert("Blog created");
+      if (isEdit) {
+        await updateBlog({ id, ...body }).unwrap();
+        alert("Blog post updated successfully!");
+      } else {
+        await createBlog(body).unwrap();
+        alert("Blog post created successfully!");
       }
-
       navigate("/blog");
-
-    }catch(err){
-      console.log(err);
-      alert(err?.data?.message ||"Something went wrong");
+    } catch (err) {
+      console.error(err);
+      alert(err?.data?.message || "Something went wrong. Please try again.");
     }
   };
 
+  const handleCancel = () => {
+    if (window.confirm("Are you sure you want to leave? Changes will be lost.")) navigate("/blog");
+  };
+
   const isLoading = creating || updating || loadingBlog;
-  
+
+  if (isEdit && loadingBlog) {
+    return <div style={{ padding: 40, textAlign: "center" }}><PageHeader title="Loading Blog Post..." /></div>;
+  }
+
+  if (isEdit && fetchError) {
+    return (
+      <div style={{ padding: 40, textAlign: "center" }}>
+        <PageHeader title="Error Loading Blog Post" />
+        <p style={{ color: "red", marginBottom: 20 }}>Could not fetch the blog post. Please try again.</p>
+        <Btn onClick={() => navigate("/blog")}>Go Back</Btn>
+      </div>
+    );
+  }
+
   return (
-  <>
-    <PageHeader
-      title={isEdit? "Edit Blog": "Create Blog"}
-      subtitle={isEdit ? "Update Blog" : "Add a new Blog"} 
-    />
+    <div>
+      <PageHeader
+        title={isEdit ? "Edit Blog Post" : "Create Blog Post"}
+        subtitle={isEdit ? "Update this article's content" : "Add a new insight / article"}
+      />
 
-    <div className="wizard">
-      <div className="wizard-content">
-        <BlogBasicInfo form={form} setForm={setForm} categories={categories}/>
+      <div className="wizard">
+        <div className="wizard-steps">
+          {STEPS.map((item, i) => (
+            <button key={item} type="button" className="wizard-step-item" onClick={() => setStep(i)} disabled={isLoading}>
+              <div className={`wizard-circle ${step === i ? "active" : ""}`}>{i + 1}</div>
+              <span className={`wizard-label ${step === i ? "active" : ""}`}>{item}</span>
+              {i !== STEPS.length - 1 && <div className="wizard-line" />}
+            </button>
+          ))}
+        </div>
 
-        <div
-          style={{
-              display:"flex",
-              justifyContent:"flex-end",
-              marginTop:40,
-          }}
-        >
-          <Btn loading={isLoading} onClick={handleSubmit}>
-            {isEdit? "Update Blog": "Save Blog"}
-          </Btn>
+        <div className="wizard-content">
+          <h2 className="wizard-title">Step {step + 1}: {STEPS[step]}</h2>
+
+          <div style={{ marginTop: 30 }}>
+            {step === 0 && <BlogBasicInfoStep form={form} setForm={setForm} />}
+            {step === 1 && <BlogHeroStep form={form} setForm={setForm} />}
+            {step === 2 && <BlogContentStep form={form} setForm={setForm} />}
+            {step === 3 && <BlogSeoStep form={form} setForm={setForm} />}
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40 }}>
+            <div style={{ display: "flex", gap: 10 }}>
+              <Btn variant="secondary" disabled={step === 0 || isLoading} onClick={() => setStep((s) => s - 1)}>Previous</Btn>
+              {!isLoading && <Btn variant="secondary" onClick={handleCancel}>Cancel</Btn>}
+            </div>
+
+            {step < STEPS.length - 1 ? (
+              <Btn onClick={() => setStep((s) => s + 1)} disabled={isLoading}>Next</Btn>
+            ) : (
+              <Btn loading={isLoading} onClick={handleSubmit} disabled={isLoading}>{isEdit ? "Update Post" : "Create Post"}</Btn>
+            )}
+          </div>
         </div>
       </div>
     </div>
-  </>
   );
 }

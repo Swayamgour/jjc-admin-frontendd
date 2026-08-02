@@ -20,7 +20,6 @@ import FAQsPage from "./pages/FAQsPage";
 import TestimonialsPage from "./pages/TestimonialsPage";
 import ServiceFormPage from "./components/allServices/ServiceFormPage";
 import IndustryFormPage from "./components/allServices/IndustryFormPage";
-import BlogCategoriesPage from "./pages/BlogCategoriesPage";
 import BlogForm from "./pages/BlogForm";
 import BlogsPage from "./pages/BlogPage";
 import CaseStudyFormPage from './pages/CaseStudyFormPage'
@@ -85,7 +84,6 @@ function AppRoutes() {
         <Route path="faqs" element={<FAQsPage />} />
         <Route path="testimonials" element={<TestimonialsPage />} />
 
-        <Route path="/blog-categories" element={<BlogCategoriesPage />} />
         <Route path="/blog" element={<BlogsPage />} />
         <Route path="/blog/new" element={<BlogForm />} />
         <Route path="/blog/edit/:id" element={<BlogForm />} />

@@ -20,7 +20,6 @@ const NAV = [
 
 
       { label: "Contact Leads", path: "/leads", icon: <InboxIcon /> },
-      { label: "Blog Categories", path: "/blog-categories", icon: <FolderIcon /> },
       { label: "Blogs", path: "/blog", icon: <BlogIcon /> },
     ]
   },

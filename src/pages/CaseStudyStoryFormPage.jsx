@@ -81,12 +81,19 @@ const STEPS = [
 // Strip the `story` field down to a plain ObjectId string (relatedStories.story
 // arrives populated from the API when editing; the backend expects an id on save).
 function normalizeRelated(relatedStories = []) {
-  return relatedStories.map((r) => ({
-    story: typeof r.story === "object" && r.story !== null ? r.story._id : r.story || "",
-    title: r.title || "",
-    slug: r.slug || "",
-    category: r.category || "",
-  }));
+  return relatedStories.map((r) => {
+    const storyId =
+      typeof r.story === "object" && r.story !== null
+        ? r.story._id
+        : r.story;
+
+    return {
+      ...(storyId ? { story: storyId } : {}),
+      title: r.title || "",
+      slug: r.slug || "",
+      category: r.category || "",
+    };
+  });
 }
 
 export default function CaseStudyStoryFormPage() {

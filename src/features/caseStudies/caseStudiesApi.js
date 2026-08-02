@@ -35,22 +35,17 @@ export const caseStudiesApi = baseApi.injectEndpoints({
     // The backend has no admin-scoped "get by slug" route, so this resolves
     // slug -> _id via the raw list (?status omitted = all statuses), then
     // fetches the full document via GET /:id. No backend change required.
+   
+
+
     getCaseStudyBySlugAdmin: b.query({
-      async queryFn(slug, _api, _extra, baseQuery) {
-        const listRes = await baseQuery({ url: `/case-studies/slug/${slug}`, params: {} });
-        if (listRes.error) return { error: listRes.error };
+      query: (slug) => ({
+        url: `/case-studies/slug/${slug}`,
+      }),
 
-        const match = (listRes.data?.data || []).find((c) => c.slug === slug);
-        if (!match) {
-          return { error: { status: 404, data: { message: `No case study found for slug "${slug}"` } } };
-        }
-
-        const fullRes = await baseQuery({ url: `/case-studies/${match._id}` });
-        if (fullRes.error) return { error: fullRes.error };
-
-        return { data: fullRes.data };
-      },
-      providesTags: (result, error, slug) => [{ type: "CaseStudies", id: `slug-${slug}` }],
+      providesTags: (result, error, slug) => [
+        { type: "CaseStudies", id: `slug-${slug}` },
+      ],
     }),
 
     // POST /api/case-studies  (multipart/form-data)

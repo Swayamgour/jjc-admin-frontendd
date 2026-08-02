@@ -8,9 +8,9 @@ export const caseStudyStoriesApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result?.data
           ? [
-              ...result.data.map((s) => ({ type: "CaseStudyStories", id: s._id })),
-              { type: "CaseStudyStories", id: "LIST" },
-            ]
+            ...result.data.map((s) => ({ type: "CaseStudyStories", id: s._id })),
+            { type: "CaseStudyStories", id: "LIST" },
+          ]
           : [{ type: "CaseStudyStories", id: "LIST" }],
     }),
 
@@ -30,20 +30,23 @@ export const caseStudyStoriesApi = baseApi.injectEndpoints({
     // the backend, so resolve slug -> _id via the raw list, then GET /:id.
     getCaseStudyStoryBySlugAdmin: b.query({
       async queryFn(slug, _api, _extra, baseQuery) {
-        const listRes = await baseQuery({ url: "/case-study-stories", params: { limit: 500 } });
-        if (listRes.error) return { error: listRes.error };
+        const res = await baseQuery({
+          url: `/case-study-stories/slug/${slug}`,
+        });
 
-        const match = (listRes.data?.data || []).find((s) => s.slug === slug);
-        if (!match) {
-          return { error: { status: 404, data: { message: `No story found for slug "${slug}"` } } };
+        if (res.error) {
+          return { error: res.error };
         }
 
-        const fullRes = await baseQuery({ url: `/case-study-stories/${match._id}` });
-        if (fullRes.error) return { error: fullRes.error };
-
-        return { data: fullRes.data };
+        return { data: res.data };
       },
-      providesTags: (result, error, slug) => [{ type: "CaseStudyStories", id: `slug-${slug}` }],
+
+      providesTags: (result, error, slug) => [
+        {
+          type: "CaseStudyStories",
+          id: `slug-${slug}`,
+        },
+      ],
     }),
 
     // POST /api/case-study-stories — plain JSON body

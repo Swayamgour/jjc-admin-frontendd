@@ -17,6 +17,7 @@ export const baseApi = createApi({
     "Services", "Platforms", "Solutions", "Industries",
     "Resources", "CaseStudies", "CaseStudyCategories", "CaseStudyStories", "Leads", "FAQs", "Testimonials",
     "Stats", "Nav", "HomeHero", "HomeSections",
+    "Blogs", "BlogCategories", "Guides", "Checklists", "Whitepapers",
   ],
   endpoints: () => ({}),
 });

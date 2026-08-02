@@ -96,6 +96,12 @@ export default function CaseStudyFormPage() {
     refetchOnMountOrArgChange: true,
   });
 
+  console.log({
+    loadingCaseStudy,
+    fetchError,
+    caseStudyData,
+  });
+
   const [createCaseStudy, { isLoading: creating }] = useCreateCaseStudyMutation();
   const [updateCaseStudy, { isLoading: updating }] = useUpdateCaseStudyMutation();
 

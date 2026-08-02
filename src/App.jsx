@@ -27,6 +27,12 @@ import CaseStudyFormPage from './pages/CaseStudyFormPage'
 import CaseStudyCategoriesPage from "./pages/CaseStudyCategoriesPage";
 import CaseStudyStoriesPage from "./pages/CaseStudyStoriesPage";
 import CaseStudyStoryFormPage from "./pages/CaseStudyStoryFormPage";
+import GuidesPage from "./pages/GuidesPage";
+import GuideFormPage from "./pages/GuideFormPage";
+import ChecklistsPage from "./pages/ChecklistsPage";
+import ChecklistFormPage from "./pages/ChecklistFormPage";
+import WhitepapersPage from "./pages/WhitepapersPage";
+import WhitepaperFormPage from "./pages/WhitepaperFormPage";
 
 function PrivateRoute({ children }) {
   const isAuthenticated = useSelector((s) => s.auth.isAuthenticated);
@@ -83,6 +89,18 @@ function AppRoutes() {
         <Route path="/blog" element={<BlogsPage />} />
         <Route path="/blog/new" element={<BlogForm />} />
         <Route path="/blog/edit/:id" element={<BlogForm />} />
+
+        <Route path="guides" element={<GuidesPage />} />
+        <Route path="guides/new" element={<GuideFormPage />} />
+        <Route path="guides/edit/:id" element={<GuideFormPage />} />
+
+        <Route path="checklists" element={<ChecklistsPage />} />
+        <Route path="checklists/new" element={<ChecklistFormPage />} />
+        <Route path="checklists/edit/:id" element={<ChecklistFormPage />} />
+
+        <Route path="whitepapers" element={<WhitepapersPage />} />
+        <Route path="whitepapers/new" element={<WhitepaperFormPage />} />
+        <Route path="whitepapers/edit/:id" element={<WhitepaperFormPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

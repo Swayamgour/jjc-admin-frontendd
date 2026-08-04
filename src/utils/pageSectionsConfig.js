@@ -4,7 +4,7 @@
 
 // pageSectionsConfig.js
 export const TYPE_STEP_MAP = {
-  service: ["basicInfo", "hero", "challenges", "pillars", "taskBoard", "approach", "whyUs", "successStories", "insights", "cta", "seo"],
+  service: ["basicInfo", "hero", "challenges", "pillars", "taskBoard", "approach", "whyUs", "outcomes", "successStories", "insights", "cta", "seo"],
   platform: ["basicInfo", "hero", "challenges", "capabilities", "industryUseCases", "outcomes", "pillars", "consultingServices", "approach", "whyUs", "successStories", "insights", "cta", "seo"],
   industry: ["basicInfo", "hero", "sectorOverview", "applicationLayer", "outcomes", "pillars", "consultingServices", "appGrid", "approach", "whyUs", "successStories", "insights", "cta", "seo"],
 };

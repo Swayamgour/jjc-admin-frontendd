@@ -35,7 +35,7 @@ export const caseStudiesApi = baseApi.injectEndpoints({
     // The backend has no admin-scoped "get by slug" route, so this resolves
     // slug -> _id via the raw list (?status omitted = all statuses), then
     // fetches the full document via GET /:id. No backend change required.
-   
+
 
 
     getCaseStudyBySlugAdmin: b.query({

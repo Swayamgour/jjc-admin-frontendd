@@ -105,8 +105,7 @@ export default function HomeItemModal({ open, mode, item, itemLabel = "Card", on
 
             {(label === "Leadership Team" ||
               label === "Client Logos" ||
-              label === "Detail services" ||
-              label === "Testimonials") && (
+              label === "Detail services") && (
                 <Field
                   label="Image"
                   hint="Optional — logos, client photos, etc."

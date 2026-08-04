@@ -44,7 +44,7 @@ export default function Layout() {
 
       <main
         className="layout__main"
-        style={{ marginLeft: collapsed ? "60px" : "var(--sidebar-w)" }}
+        style={{ marginLeft: collapsed ? "92px" : "calc(var(--sidebar-w) + 24px)" }}
       >
         <Outlet />
       </main>

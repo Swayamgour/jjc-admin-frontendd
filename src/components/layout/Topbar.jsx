@@ -5,7 +5,7 @@ export default function Topbar({ sidebarCollapsed, onMenuClick }) {
   const user = useSelector((s) => s.auth.user);
 
   return (
-    <header className="topbar" style={{ left: sidebarCollapsed ? "60px" : "var(--sidebar-w)" }}>
+    <header className="topbar" style={{ left: sidebarCollapsed ? "80px" : "calc(var(--sidebar-w) + 24px)" }}>
       <div className="topbar__left">
         {/* Hamburger — visible on mobile only via CSS */}
         <button className="topbar__hamburger" onClick={onMenuClick} aria-label="Toggle menu">

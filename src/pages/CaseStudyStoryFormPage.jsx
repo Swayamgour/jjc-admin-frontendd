@@ -23,6 +23,7 @@ import StoryRelatedSeoStep from "../components/caseStudies/story/StoryRelatedSeo
 
 const EMPTY_FORM = {
   title: "",
+  slug: "",
   parentCategory: "",
   organization: "",
   country: "",
@@ -128,7 +129,10 @@ export default function CaseStudyStoryFormPage() {
 
     setForm({
       title: s.title || "",
+      slug: s.slug || "",          // <-- NEW
       parentCategory: s.parentCategory?._id || s.parentCategory || "",
+      // title: s.title || "",
+      // parentCategory: s.parentCategory?._id || s.parentCategory || "",
       organization: s.organization || "",
       country: s.country || "",
       tags: s.tags || [],

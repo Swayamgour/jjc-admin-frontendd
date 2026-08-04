@@ -8,8 +8,11 @@
 /* Card containing steps */
 .wizard-steps {
     background: var(--bg-surface);
-    border: 1px solid var(--border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
     padding: 30px 10px;
     display: flex;
     justify-content: space-between;
@@ -38,38 +41,40 @@
 .wizard-circle {
     width: 48px;
     height: 48px;
-    border: 2px solid #cbd5e1;
+    border: 2px solid var(--border);
     border-radius: 50%;
-    background: white;
+    background: rgba(255, 255, 255, .7);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-weight: 600;
-    color: #64748b;
+    font-weight: 700;
+    color: var(--text-muted);
     z-index: 2;
+    transition: var(--transition);
 }
 
 /* Active circle */
 .wizard-circle.active {
-    border-color: #2563eb;
-    color: #2563eb;
-    box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.15);
+    border-color: var(--accent);
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), #8B7CF0);
+    box-shadow: 0 0 0 5px var(--accent-muted), var(--shadow-glow);
 }
 
 /* Label below circle */
 .wizard-label {
     margin-top: 14px;
     font-size: 14px;
-    color: #64748b;
+    color: var(--text-muted);
     text-align: center;
     font-weight: 500;
 }
 
 .wizard-label.active {
-    color: #2563eb;
-    font-weight: 600;
+    color: var(--accent);
+    font-weight: 700;
 }
 
 /* Horizontal line */
@@ -79,14 +84,17 @@
     left: 70px;
     width: 90px;
     height: 2px;
-    background: #d1d5db;
+    background: var(--border);
 }
 
 /* Content card */
 .wizard-content {
     background: var(--bg-surface);
-    border: 1px solid var(--border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
     padding: 32px;
 }
 

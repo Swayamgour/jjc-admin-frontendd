@@ -197,7 +197,7 @@ export default function CaseStudyCategoriesPage() {
           <Input value={form.icon} onChange={(e) => set("icon", e.target.value)} placeholder="Building2" />
         </Field>
 
-        <Field label="Theme Colors">
+        {/* <Field label="Theme Colors">
           <div className="grid-2">
             <Input value={form.theme.accent} onChange={(e) => setTheme("accent", e.target.value)} placeholder="Accent #hex" />
 
@@ -206,7 +206,7 @@ export default function CaseStudyCategoriesPage() {
             <Input value={form.theme.accentSoft} onChange={(e) => setTheme("accentSoft", e.target.value)} placeholder="Accent Soft rgba(...)" />
             <Input value={form.theme.accentRgb} onChange={(e) => setTheme("accentRgb", e.target.value)} placeholder="Accent RGB e.g. 37, 99, 235" />
           </div>
-        </Field>
+        </Field> */}
 
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
           <Btn variant="ghost" onClick={() => setModal(null)}>Cancel</Btn>

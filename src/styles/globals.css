@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 *,
 *::before,
@@ -9,55 +9,72 @@
 }
 
 :root {
-  /* Backgrounds – all white based */
-  --bg-base: #FFFFFF;
-  --bg-surface: rgba(255, 255, 255, .85);
-  --bg-elevated: #FFFFFF;
-  --bg-hover: #F0F4FF;
-  /* subtle blue hint for hover */
+  /* ── Neutral slate base ── */
+  --bg-base: #eef1f6;
+  --bg-body: #eef1f6;
+  --bg-surface: rgba(255, 255, 255, .6);
+  --bg-surface-strong: rgba(255, 255, 255, .78);
+  --bg-elevated: rgba(255, 255, 255, .9);
+  --bg-hover: rgba(79, 70, 229, .07);
 
-  /* Brand – primary blue #3b82f6 */
-  --accent: #3b82f6;
-  --accent-hover: #2563EB;
-  --accent-light: #DBEAFE;
+  /* ── Single accent — indigo ── */
+  --accent: #4F46E5;
+  --accent-hover: #4338CA;
+  --accent-light: #EEF2FF;
+  --accent-muted: rgba(79, 70, 229, .1);
+  --text-accent: #4F46E5;
 
-  /* Secondary – kept as is, but you can change if needed */
-  --secondary: #7C3AED;
-  --secondary-light: #F3E8FF;
+  /* ── Secondary (purple, used for a few status colors) ── */
+  --purple: #8B5CF6;
+  --purple-muted: rgba(139, 92, 246, .12);
+  --secondary: #8B5CF6;
+  --secondary-light: rgba(139, 92, 246, .12);
 
-  /* Status */
+  /* ── Status ── */
   --green: #10B981;
+  --green-muted: rgba(16, 185, 129, .12);
   --yellow: #F59E0B;
+  --yellow-muted: rgba(245, 158, 11, .13);
   --red: #EF4444;
+  --red-muted: rgba(239, 68, 68, .12);
 
-  /* Text – dark for readability, blue is used as accent only */
+  /* ── Text ── */
   --text-primary: #0F172A;
-  /* slate-900 */
   --text-secondary: #475569;
   --text-muted: #94A3B8;
 
-  /* Borders */
+  /* ── Borders ── */
   --border: rgba(15, 23, 42, .08);
-  --border-light: rgba(15, 23, 42, .04);
+  --border-light: rgba(15, 23, 42, .05);
+  --glass-border: rgba(255, 255, 255, .6);
 
-  /* Layout */
-  --sidebar-w: 260px;
+  /* ── Glass ── */
+  --glass-blur: blur(20px);
+  --glass-blur-sm: blur(12px);
+
+  /* ── Layout ── */
+  --sidebar-w: 264px;
   --topbar-h: 72px;
 
-  /* Radius */
+  /* ── Radius ── */
   --radius-sm: 10px;
   --radius-md: 18px;
   --radius-lg: 24px;
 
-  /* Premium Shadows – subtle, works on white */
+  /* ── Shadows ── */
   --shadow-card:
     0 1px 2px rgba(15, 23, 42, .04),
-    0 8px 24px rgba(15, 23, 42, .06);
+    0 10px 30px rgba(15, 23, 42, .07);
 
   --shadow-hover:
-    0 20px 40px rgba(15, 23, 42, .08);
+    0 24px 48px rgba(15, 23, 42, .12);
 
-  --transition: all .25s ease;
+  --shadow-modal:
+    0 30px 70px rgba(15, 23, 42, .25);
+
+  --shadow-glow: 0 8px 24px rgba(79, 70, 229, .25);
+
+  --transition: all .25s cubic-bezier(.4, 0, .2, 1);
 }
 
 html,
@@ -66,9 +83,17 @@ body,
   height: 100%;
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 14px;
-  background: var(--bg-base);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(79, 70, 229, .10), transparent 40%),
+    radial-gradient(circle at 92% 12%, rgba(139, 92, 246, .10), transparent 38%),
+    radial-gradient(circle at 50% 100%, rgba(59, 130, 246, .07), transparent 45%),
+    linear-gradient(180deg, #f4f6fb 0%, #eef1f6 100%);
+  background-attachment: fixed;
 }
 
 a {
@@ -95,7 +120,7 @@ select {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-base);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -155,4 +180,9 @@ select {
   to {
     transform: translateX(0);
   }
+}
+
+@keyframes floatBlob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(10px, -14px) scale(1.04); }
 }

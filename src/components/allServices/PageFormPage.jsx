@@ -48,8 +48,9 @@ const SECTION_FIELD_CONFIG = {
 		label: "Use Case",
 	},
 	outcomes: {
+		arrayKey: "metrics",
 		fields: ["label", "value", "description"],
-		label: "Outcome",
+		label: "Metric",
 	},
 	pillars: {
 		fields: ["icon", "title", "description", "points"],
@@ -207,6 +208,7 @@ export default function PageFormPage({ type, listPath }) {
 		if (currentKey === "hero") {
 			return <HeroStep form={form} setForm={setForm} />;
 		}
+
 		if (currentKey === "overview") {
 			return <OverviewStep form={form} setForm={setForm} />;
 		}
@@ -251,6 +253,7 @@ export default function PageFormPage({ type, listPath }) {
 					onChange={(v) => setForm({ ...form, [currentKey]: v })}
 					fields={config.fields}
 					cardLabel={config.label}
+					arrayKey={config.arrayKey || "items"}
 				/>
 			);
 		}

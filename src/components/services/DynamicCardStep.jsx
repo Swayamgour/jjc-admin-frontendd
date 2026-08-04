@@ -6,8 +6,9 @@ export default function DynamicCardStep({
   onChange,
   fields = [], // ['title', 'description', 'icon', 'points', 'tag', 'meta', 'link', 'industry']
   cardLabel = "Item",
+  arrayKey = "items", // e.g. "metrics" for outcomes section
 }) {
-  const items = section.items || [];
+  const items = section[arrayKey] || [];
 
   const updateSection = (field, value) => {
     onChange({ ...section, [field]: value });
@@ -23,26 +24,26 @@ export default function DynamicCardStep({
     });
     onChange({
       ...section,
-      items: [...items, newItem],
+      [arrayKey]: [...items, newItem],
     });
   };
 
   const updateItem = (index, field, value) => {
     const updated = [...items];
     updated[index] = { ...updated[index], [field]: value };
-    onChange({ ...section, items: updated });
+    onChange({ ...section, [arrayKey]: updated });
   };
 
   const updateNestedArray = (index, field, value) => {
     const updated = [...items];
     updated[index][field] = value.split("\n").filter(Boolean);
-    onChange({ ...section, items: updated });
+    onChange({ ...section, [arrayKey]: updated });
   };
 
   const removeItem = (index) => {
     onChange({
       ...section,
-      items: items.filter((_, i) => i !== index),
+      [arrayKey]: items.filter((_, i) => i !== index),
     });
   };
 
@@ -154,14 +155,14 @@ export default function DynamicCardStep({
       </div>
 
       <div className="dynamic-header">
-        <h3>{title} Items</h3>
+        <h3>{title} {cardLabel}s</h3>
         <Btn type="button" onClick={addItem}>Add</Btn>
       </div>
 
       <div className="dynamic-cards">
         {items.length === 0 ? (
           <div className="dynamic-empty">
-            <p>No items added.</p>
+            <p>No {cardLabel.toLowerCase()}s added.</p>
             <Btn type="button" onClick={addItem}>Add</Btn>
           </div>
         ) : (

@@ -23,7 +23,9 @@ import SeoStep from "../shared/sections/SeoStep";
 import FaqStep from "../services/FaqStep";
 import DeliveryProcessStep from "../services/DeliveryProcessStep";
 import DynamicCardStep from "../services/DynamicCardStep";
+import SuccessStoriesStep from "../services/SuccessStoriesStep";
 import IndustryListStep from "./IndustryListStep";
+import CtaStep from "../services/CtaStep";
 
 // Field configurations for each section type
 const SECTION_FIELD_CONFIG = {
@@ -57,6 +59,7 @@ const SECTION_FIELD_CONFIG = {
 		label: "Pillar",
 	},
 	taskBoard: {
+		arrayKey: "tasks",
 		fields: ["tag", "title", "description"],
 		label: "Task",
 	},
@@ -73,10 +76,19 @@ const SECTION_FIELD_CONFIG = {
 		label: "Reason",
 	},
 	successStories: {
-		fields: ["industry", "title", "summary", "metrics", "outcomes", "ctaLink"],
+		arrayKey: "stories",
+		fields: [
+			"industry",
+			"title",
+			"summary",
+			"metrics",
+			"outcomes",
+			"ctaLink",
+		],
 		label: "Story",
 	},
 	insights: {
+		arrayKey: "posts",
 		fields: ["tag", "meta", "title", "description", "link"],
 		label: "Post",
 	},
@@ -89,6 +101,7 @@ const SECTION_FIELD_CONFIG = {
 		label: "Related Item",
 	},
 	approach: {
+		arrayKey: "steps",
 		fields: ["title", "description"],
 		label: "Step",
 	},
@@ -201,6 +214,8 @@ export default function PageFormPage({ type, listPath }) {
 	const currentKey = stepKeys[step];
 	const currentSection = SECTION_LIBRARY[currentKey];
 
+	console.log(currentKey)
+
 	function renderStep() {
 		if (currentKey === "basicInfo") {
 			return <BasicInfoStep form={form} setForm={setForm} categories={categories} type={type} />;
@@ -218,8 +233,37 @@ export default function PageFormPage({ type, listPath }) {
 		if (currentKey === "faqs") {
 			return <FaqStep form={form} setForm={setForm} />;
 		}
+		if (currentKey === "cta") {
+			return (
+				<CtaStep
+					section={form.cta || {}}
+					onChange={(value) =>
+						setForm({
+							...form,
+							cta: value,
+						})
+					}
+				/>
+			);
+		}
+		if (currentKey === "successStories") {
+			return (
+				<SuccessStoriesStep
+					title="Success Stories"
+					section={form.successStories || {}}
+					onChange={(v) =>
+						setForm({
+							...form,
+							successStories: v,
+						})
+					}
+				/>
+			);
+		}
 
 		const componentType = currentSection?.component;
+
+		console.log(componentType, currentSection)
 
 		if (componentType === "deliveryProcess") {
 			return (

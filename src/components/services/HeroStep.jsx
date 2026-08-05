@@ -41,6 +41,26 @@ export default function HeroStep({ form, setForm }) {
 		});
 	};
 
+	const addGlanceItem = () => {
+		updateGlance("items", [...(glance.items || []), ""]);
+	};
+
+	const updateGlanceItem = (index, value) => {
+		const updated = [...(glance.items || [])];
+
+		updated[index] = value;
+
+		updateGlance("items", updated);
+	};
+
+	const removeGlanceItem = (index) => {
+		const updated = (glance.items || []).filter(
+			(_, i) => i !== index
+		);
+
+		updateGlance("items", updated);
+	};
+
 	const removeStat = (index) => {
 		setForm({
 			...form,
@@ -117,34 +137,43 @@ export default function HeroStep({ form, setForm }) {
 				<h3>At a Glance</h3>
 			</div>
 
-			<div className="form-grid">
-				<Field label="Glance Title">
-					<Input
-						value={glance.title || ""}
-						onChange={(e) => updateGlance("title", e.target.value)}
-						placeholder="At a glance"
-					/>
-				</Field>
+			<div className="section-divider">
+				<h3>Glance Items</h3>
 
-				<Field label="Glance Items">
-					<Textarea
-						rows={6}
-						value={(glance.items || []).join("\n")}
-						onChange={(e) =>
-							updateGlance("items", e.target.value.split("\n").filter(Boolean))
-						}
-						placeholder="One item per line"
-					/>
-				</Field>
+				<Btn type="button" onClick={addGlanceItem}>
+					Add Item
+				</Btn>
 			</div>
+
+			{(glance.items || []).map((item, index) => (
+				<div key={index} className="form-grid">
+					<Field label={`Item ${index + 1}`}>
+						<Input
+							value={item || ""}
+							onChange={(e) =>
+								updateGlanceItem(index, e.target.value)
+							}
+							placeholder="Enter item"
+						/>
+					</Field>
+
+					<Btn
+						type="button"
+						variant="danger"
+						onClick={() => removeGlanceItem(index)}
+					>
+						Remove
+					</Btn>
+				</div>
+			))}
 
 			{/* Stats Section */}
-			<div className="section-divider">
+			{/* <div className="section-divider">
 				<h3>Stats</h3>
 				<Btn type="button" onClick={addStat}>Add Stat</Btn>
-			</div>
+			</div> */}
 
-			<div className="dynamic-cards">
+			{/* <div className="dynamic-cards">
 				{stats.length === 0 ? (
 					<div className="dynamic-empty">
 						<p>No stats added.</p>
@@ -175,7 +204,7 @@ export default function HeroStep({ form, setForm }) {
 						</div>
 					))
 				)}
-			</div>
+			</div> */}
 		</div>
 	);
 }

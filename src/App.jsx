@@ -108,7 +108,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename="/admin">
         <AppRoutes />
       </BrowserRouter>
     </Provider>

@@ -2,6 +2,7 @@
   "name": "jjc-admin",
   "version": "1.0.0",
   "private": true,
+  "homepage": "/admin",
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
     "react": "^18.2.0",

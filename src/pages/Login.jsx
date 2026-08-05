@@ -64,7 +64,7 @@ export default function Login() {
         </form>
 
         <p className="login__hint">
-          Default: <code>admin@jjcsystems.com</code> / <code>Admin@JJC2024</code>
+          Default: <code>admin@jjcsystems.com</code> / <code>Admin@JJC2026</code>
         </p>
       </div>
     </div>

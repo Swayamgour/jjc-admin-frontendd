@@ -4,7 +4,8 @@ export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     // baseUrl: "https://jjc-backend-new-two.onrender.com/api",
-    baseUrl: "https://jjc.admin.amaxjobs.com/api",
+    baseUrl: "https://admin.jjcsystems.com/api",
+    // baseUrl: "https://jjc.admin.amaxjobs.com/api",
     // baseUrl: "https://jjc-backend-2.onrender.com/api",
     // baseUrl: "http://localhost:5008/api",
     prepareHeaders: (headers, { getState }) => {

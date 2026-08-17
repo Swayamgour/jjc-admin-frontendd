@@ -1,19 +1,56 @@
-import { Textarea, Field } from "../../ui/UI";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { Field } from "../../ui/UI";
+
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["blockquote", "code-block"],
+    ["link", "image"],
+    [{ align: [] }],
+    [{ color: [] }, { background: [] }],
+    ["clean"],
+  ],
+};
+
+const formats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "list",
+  "bullet",
+  "blockquote",
+  "code-block",
+  "link",
+  "image",
+  "align",
+  "color",
+  "background",
+];
 
 export default function BlogContentStep({ form, setForm }) {
-  const set = (key, value) => setForm({ ...form, [key]: value });
-
   return (
     <div className="step-content">
       <Field
         label="Content"
-        hint="Full HTML body — use <h2>, <p>, <ul>/<li>, and <div class='pull'> for the takeaways pull-quote block. This is what renders on the article page."
+        hint="Write your blog content. Headings, paragraphs and lists will automatically be saved as HTML."
       >
-        <Textarea
-          rows={22}
+        <ReactQuill
+          theme="snow"
           value={form.content || ""}
-          onChange={(e) => set("content", e.target.value)}
-          placeholder={'<p class="stand">Opening stand-first paragraph...</p>\n<h2>Section heading</h2>\n<p>Paragraph text...</p>\n<ul>\n  <li>Point one</li>\n</ul>'}
+          onChange={(value) =>
+            setForm({
+              ...form,
+              content: value,
+            })
+          }
+          modules={modules}
+          formats={formats}
+          style={{ minHeight: "450px" }}
         />
       </Field>
     </div>

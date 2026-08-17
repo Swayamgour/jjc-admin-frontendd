@@ -49,9 +49,24 @@ const SECTION_FIELD_CONFIG = {
 		fields: ["title", "description"],
 		label: "Use Case",
 	},
+	// outcomes: {
+	// 	arrayKey: "metrics",
+	// 	fields: ["label", "value", "description"],
+	// 	label: "Metric",
+	// },
+
 	outcomes: {
 		arrayKey: "metrics",
-		fields: ["label", "value", "description"],
+		fields: [
+			"label",
+			"value",
+			"description",
+			"note",
+			"associatedTitle",
+			"associatedSubtitle",
+			"associatedItems",
+			"associatedNote",
+		],
 		label: "Metric",
 	},
 	pillars: {
@@ -96,8 +111,18 @@ const SECTION_FIELD_CONFIG = {
 		fields: ["title", "description", "primaryLabel", "primaryLink", "secondaryLabel", "secondaryLink", "note"],
 		label: "CTA",
 	},
+	// relatedItems: {
+	// 	fields: ["title", "description"],
+	// 	label: "Related Item",
+	// },
+
 	relatedItems: {
-		fields: ["title", "description"],
+		fields: [
+			"icon",
+			"title",
+			"description",
+			"link"
+		],
 		label: "Related Item",
 	},
 	approach: {

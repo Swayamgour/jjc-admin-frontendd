@@ -16,16 +16,47 @@ import BlogContentStep from "../components/blogs/steps/BlogContentStep";
 import BlogSeoStep from "../components/blogs/steps/BlogSeoStep";
 
 const EMPTY_FORM = {
-  title: "", slug: "", description: "", content: "",
-  platform: "", service: "", industry: "", type: "", icon: "chart",
-  readTime: "", publishedAt: "",
+  title: "",
+  slug: "",
+  description: "",
+  content: "",
 
-  eyebrow: "", takeaways: [],
-  ctaPrimary: { text: "Talk to us about this", link: "/contact" },
-  ctaSecondary: { text: "More insights", link: "/blog" },
-  breadcrumb: { parent: "Insights", parentLink: "/blog", current: "" },
+  platform: "",
+  service: "",
+  industry: "",
+  type: "",
+  icon: "chart",
 
-  isPublished: true, author: "JJC Systems", seoTitle: "", seoDescription: "",
+  // Feature image
+  featureImage: null,
+
+  readTime: "",
+  publishedAt: "",
+
+  eyebrow: "",
+  takeaways: [],
+
+  ctaPrimary: {
+    text: "Talk to us about this",
+    link: "/contact",
+  },
+
+  ctaSecondary: {
+    text: "More insights",
+    link: "/blog",
+  },
+
+  breadcrumb: {
+    parent: "Insights",
+    parentLink: "/blog",
+    current: "",
+  },
+
+  isPublished: true,
+  author: "JJC Systems",
+
+  seoTitle: "",
+  seoDescription: "",
 };
 
 const STEPS = ["Basic Info", "Hero", "Content", "SEO"];
@@ -38,100 +69,385 @@ export default function BlogForm() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(EMPTY_FORM);
 
-  const { data: blogData, isLoading: loadingBlog, error: fetchError } = useGetBlogByIdQuery(id, { skip: !isEdit });
+  const {
+    data: blogData,
+    isLoading: loadingBlog,
+    error: fetchError,
+  } = useGetBlogByIdQuery(id, {
+    skip: !isEdit,
+  });
 
-  const [createBlog, { isLoading: creating }] = useCreateBlogMutation();
-  const [updateBlog, { isLoading: updating }] = useUpdateBlogMutation();
+  const [createBlog, { isLoading: creating }] =
+    useCreateBlogMutation();
+
+  const [updateBlog, { isLoading: updating }] =
+    useUpdateBlogMutation();
+
+  /* ---------------- LOAD EDIT DATA ---------------- */
 
   useEffect(() => {
     if (!blogData?.data) return;
+
     const p = blogData.data;
-    setForm({ ...EMPTY_FORM, ...p, publishedAt: p.publishedAt ? p.publishedAt.slice(0, 10) : "" });
+
+    setForm({
+      ...EMPTY_FORM,
+      ...p,
+
+      publishedAt: p.publishedAt
+        ? p.publishedAt.slice(0, 10)
+        : "",
+
+      // Existing Cloudinary URL remains a string
+      featureImage: p.featureImage || null,
+
+      takeaways: Array.isArray(p.takeaways)
+        ? p.takeaways
+        : [],
+
+      ctaPrimary: p.ctaPrimary || EMPTY_FORM.ctaPrimary,
+
+      ctaSecondary:
+        p.ctaSecondary || EMPTY_FORM.ctaSecondary,
+
+      breadcrumb:
+        p.breadcrumb || EMPTY_FORM.breadcrumb,
+    });
   }, [blogData]);
 
+  /* ---------------- SUBMIT ---------------- */
+
   const handleSubmit = async () => {
-    if (!form.title || !form.description || !form.platform || !form.service || !form.industry || !form.type) {
-      alert("Title, Description, Platform, Service, Industry and Type are required.");
+    if (
+      !form.title ||
+      !form.description ||
+      !form.platform ||
+      !form.service ||
+      !form.industry ||
+      !form.type
+    ) {
+      alert(
+        "Title, Description, Platform, Service, Industry and Type are required."
+      );
+
       setStep(0);
       return;
     }
+
     try {
-      const body = { ...form };
-      if (!body.publishedAt) delete body.publishedAt;
+      const formData = new FormData();
+
+      /* ---------------- BASIC INFO ---------------- */
+
+      formData.append("title", form.title);
+      formData.append("slug", form.slug || "");
+      formData.append("description", form.description);
+      formData.append("content", form.content || "");
+
+      formData.append("platform", form.platform);
+      formData.append("service", form.service);
+      formData.append("industry", form.industry);
+      formData.append("type", form.type);
+      formData.append("icon", form.icon || "chart");
+
+      formData.append("readTime", form.readTime || "");
+
+      if (form.publishedAt) {
+        formData.append("publishedAt", form.publishedAt);
+      }
+
+      /* ---------------- HERO ---------------- */
+
+      formData.append("eyebrow", form.eyebrow || "");
+
+      formData.append(
+        "takeaways",
+        JSON.stringify(form.takeaways || [])
+      );
+
+      formData.append(
+        "ctaPrimary",
+        JSON.stringify(form.ctaPrimary || {})
+      );
+
+      formData.append(
+        "ctaSecondary",
+        JSON.stringify(form.ctaSecondary || {})
+      );
+
+      formData.append(
+        "breadcrumb",
+        JSON.stringify(form.breadcrumb || {})
+      );
+
+      /* ---------------- PUBLISHING ---------------- */
+
+      formData.append(
+        "isPublished",
+        String(!!form.isPublished)
+      );
+
+      formData.append(
+        "author",
+        form.author || "JJC Systems"
+      );
+
+      /* ---------------- SEO ---------------- */
+
+      formData.append(
+        "seoTitle",
+        form.seoTitle || ""
+      );
+
+      formData.append(
+        "seoDescription",
+        form.seoDescription || ""
+      );
+
+      /* ---------------- FEATURE IMAGE ---------------- */
+
+      // Only upload when user selected a NEW image.
+      if (form.featureImage instanceof File) {
+        formData.append(
+          "featureImage",
+          form.featureImage
+        );
+      }
+
+      /* ---------------- API ---------------- */
 
       if (isEdit) {
-        await updateBlog({ id, ...body }).unwrap();
+        await updateBlog({
+          id,
+          body: formData,
+        }).unwrap();
+
         alert("Blog post updated successfully!");
       } else {
-        await createBlog(body).unwrap();
+        await createBlog(formData).unwrap();
+
         alert("Blog post created successfully!");
       }
+
       navigate("/blog");
     } catch (err) {
-      console.error(err);
-      alert(err?.data?.message || "Something went wrong. Please try again.");
+      console.error("Blog submit error:", err);
+
+      alert(
+        err?.data?.message ||
+        "Something went wrong. Please try again."
+      );
     }
   };
 
+  /* ---------------- CANCEL ---------------- */
+
   const handleCancel = () => {
-    if (window.confirm("Are you sure you want to leave? Changes will be lost.")) navigate("/blog");
+    if (
+      window.confirm(
+        "Are you sure you want to leave? Changes will be lost."
+      )
+    ) {
+      navigate("/blog");
+    }
   };
 
-  const isLoading = creating || updating || loadingBlog;
+  const isLoading =
+    creating || updating || loadingBlog;
+
+  /* ---------------- LOADING ---------------- */
 
   if (isEdit && loadingBlog) {
-    return <div style={{ padding: 40, textAlign: "center" }}><PageHeader title="Loading Blog Post..." /></div>;
-  }
-
-  if (isEdit && fetchError) {
     return (
-      <div style={{ padding: 40, textAlign: "center" }}>
-        <PageHeader title="Error Loading Blog Post" />
-        <p style={{ color: "red", marginBottom: 20 }}>Could not fetch the blog post. Please try again.</p>
-        <Btn onClick={() => navigate("/blog")}>Go Back</Btn>
+      <div
+        style={{
+          padding: 40,
+          textAlign: "center",
+        }}
+      >
+        <PageHeader title="Loading Blog Post..." />
       </div>
     );
   }
 
+  /* ---------------- ERROR ---------------- */
+
+  if (isEdit && fetchError) {
+    return (
+      <div
+        style={{
+          padding: 40,
+          textAlign: "center",
+        }}
+      >
+        <PageHeader title="Error Loading Blog Post" />
+
+        <p
+          style={{
+            color: "red",
+            marginBottom: 20,
+          }}
+        >
+          Could not fetch the blog post. Please try again.
+        </p>
+
+        <Btn onClick={() => navigate("/blog")}>
+          Go Back
+        </Btn>
+      </div>
+    );
+  }
+
+  /* ---------------- UI ---------------- */
+
   return (
     <div>
       <PageHeader
-        title={isEdit ? "Edit Blog Post" : "Create Blog Post"}
-        subtitle={isEdit ? "Update this article's content" : "Add a new insight / article"}
+        title={
+          isEdit
+            ? "Edit Blog Post"
+            : "Create Blog Post"
+        }
+        subtitle={
+          isEdit
+            ? "Update this article's content"
+            : "Add a new insight / article"
+        }
       />
 
       <div className="wizard">
+
+        {/* STEPS */}
+
         <div className="wizard-steps">
           {STEPS.map((item, i) => (
-            <button key={item} type="button" className="wizard-step-item" onClick={() => setStep(i)} disabled={isLoading}>
-              <div className={`wizard-circle ${step === i ? "active" : ""}`}>{i + 1}</div>
-              <span className={`wizard-label ${step === i ? "active" : ""}`}>{item}</span>
-              {i !== STEPS.length - 1 && <div className="wizard-line" />}
+            <button
+              key={item}
+              type="button"
+              className="wizard-step-item"
+              onClick={() => setStep(i)}
+              disabled={isLoading}
+            >
+              <div
+                className={`wizard-circle ${step === i ? "active" : ""
+                  }`}
+              >
+                {i + 1}
+              </div>
+
+              <span
+                className={`wizard-label ${step === i ? "active" : ""
+                  }`}
+              >
+                {item}
+              </span>
+
+              {i !== STEPS.length - 1 && (
+                <div className="wizard-line" />
+              )}
             </button>
           ))}
         </div>
 
+        {/* CONTENT */}
+
         <div className="wizard-content">
-          <h2 className="wizard-title">Step {step + 1}: {STEPS[step]}</h2>
+
+          <h2 className="wizard-title">
+            Step {step + 1}: {STEPS[step]}
+          </h2>
 
           <div style={{ marginTop: 30 }}>
-            {step === 0 && <BlogBasicInfoStep form={form} setForm={setForm} />}
-            {step === 1 && <BlogHeroStep form={form} setForm={setForm} />}
-            {step === 2 && <BlogContentStep form={form} setForm={setForm} />}
-            {step === 3 && <BlogSeoStep form={form} setForm={setForm} />}
+
+            {step === 0 && (
+              <BlogBasicInfoStep
+                form={form}
+                setForm={setForm}
+              />
+            )}
+
+            {step === 1 && (
+              <BlogHeroStep
+                form={form}
+                setForm={setForm}
+              />
+            )}
+
+            {step === 2 && (
+              <BlogContentStep
+                form={form}
+                setForm={setForm}
+              />
+            )}
+
+            {step === 3 && (
+              <BlogSeoStep
+                form={form}
+                setForm={setForm}
+              />
+            )}
+
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40 }}>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Btn variant="secondary" disabled={step === 0 || isLoading} onClick={() => setStep((s) => s - 1)}>Previous</Btn>
-              {!isLoading && <Btn variant="secondary" onClick={handleCancel}>Cancel</Btn>}
+          {/* BUTTONS */}
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: 40,
+            }}
+          >
+
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+              }}
+            >
+              <Btn
+                variant="secondary"
+                disabled={
+                  step === 0 || isLoading
+                }
+                onClick={() =>
+                  setStep((s) => s - 1)
+                }
+              >
+                Previous
+              </Btn>
+
+              {!isLoading && (
+                <Btn
+                  variant="secondary"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Btn>
+              )}
             </div>
 
             {step < STEPS.length - 1 ? (
-              <Btn onClick={() => setStep((s) => s + 1)} disabled={isLoading}>Next</Btn>
+              <Btn
+                onClick={() =>
+                  setStep((s) => s + 1)
+                }
+                disabled={isLoading}
+              >
+                Next
+              </Btn>
             ) : (
-              <Btn loading={isLoading} onClick={handleSubmit} disabled={isLoading}>{isEdit ? "Update Post" : "Create Post"}</Btn>
+              <Btn
+                loading={isLoading}
+                onClick={handleSubmit}
+                disabled={isLoading}
+              >
+                {isEdit
+                  ? "Update Post"
+                  : "Create Post"}
+              </Btn>
             )}
+
           </div>
         </div>
       </div>

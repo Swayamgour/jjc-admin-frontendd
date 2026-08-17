@@ -25,19 +25,26 @@ export const blogApi = baseApi.injectEndpoints({
 
     // POST /api/blog
     createBlog: b.mutation({
-      query: (body) => ({ url: "/blog", method: "POST", body }),
+      query: (body) => ({
+        url: "/blog",
+        method: "POST",
+        body,
+      }),
       invalidatesTags: [{ type: "Blogs", id: "LIST" }],
     }),
-
     // PUT /api/blog/:id
     updateBlog: b.mutation({
-      query: ({ id, ...body }) => ({ url: `/blog/${id}`, method: "PUT", body }),
+      query: ({ id, body }) => ({
+        url: `/blog/${id}`,
+        method: "PUT",
+        body,
+      }),
+
       invalidatesTags: (result, error, { id }) => [
         { type: "Blogs", id },
         { type: "Blogs", id: "LIST" },
       ],
     }),
-
     // DELETE /api/blog/:id
     deleteBlog: b.mutation({
       query: (id) => ({ url: `/blog/${id}`, method: "DELETE" }),

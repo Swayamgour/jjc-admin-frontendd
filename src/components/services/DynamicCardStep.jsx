@@ -130,6 +130,131 @@ export default function DynamicCardStep({
             </Btn>
           </div>
         );
+
+      case "associatedTitle":
+        return (
+          <Field label="Associated Title">
+            <Input
+              value={section.associatedTitle || ""}
+              onChange={(e) =>
+                updateSection(
+                  "associatedTitle",
+                  e.target.value
+                )
+              }
+            />
+          </Field>
+        );
+
+      case "associatedItems":
+        return (
+          <div>
+            <h4>Associated Items</h4>
+
+            {(section.associatedItems || []).map(
+              (item, i) => (
+                <div key={i} className="dynamic-card">
+                  <Field label="Title">
+                    <Input
+                      value={item.title || ""}
+                      onChange={(e) => {
+                        const updated = [
+                          ...(section.associatedItems ||
+                            []),
+                        ];
+
+                        updated[i] = {
+                          ...updated[i],
+                          title: e.target.value,
+                        };
+
+                        updateSection(
+                          "associatedItems",
+                          updated
+                        );
+                      }}
+                    />
+                  </Field>
+
+                  <Field label="Description">
+                    <Textarea
+                      rows={3}
+                      value={item.description || ""}
+                      onChange={(e) => {
+                        const updated = [
+                          ...(section.associatedItems ||
+                            []),
+                        ];
+
+                        updated[i] = {
+                          ...updated[i],
+                          description:
+                            e.target.value,
+                        };
+
+                        updateSection(
+                          "associatedItems",
+                          updated
+                        );
+                      }}
+                    />
+                  </Field>
+                </div>
+              )
+            )}
+
+            <Btn
+              type="button"
+              onClick={() =>
+                updateSection(
+                  "associatedItems",
+                  [
+                    ...(section.associatedItems ||
+                      []),
+                    {
+                      title: "",
+                      description: "",
+                    },
+                  ]
+                )
+              }
+            >
+              Add Item
+            </Btn>
+          </div>
+        );
+      case "associatedSubtitle":
+        return (
+          <Field label="Associated Subtitle">
+            <Textarea
+              rows={3}
+              value={section.associatedSubtitle || ""}
+              onChange={(e) =>
+                updateSection(
+                  "associatedSubtitle",
+                  e.target.value
+                )
+              }
+            />
+          </Field>
+        );
+
+      case "associatedNote":
+        return (
+          <Field label="Associated Note">
+            <Textarea
+              rows={3}
+              value={section.associatedNote || ""}
+              onChange={(e) =>
+                updateSection(
+                  "associatedNote",
+                  e.target.value
+                )
+              }
+            />
+          </Field>
+        );
+
       // case "metrics":
       //   return (
       //     <Field label={`Metrics (one per line)`} key={field}>
@@ -218,6 +343,9 @@ export default function DynamicCardStep({
             />
           </Field>
         );
+
+
+
       default:
         return (
           <Field label={field.charAt(0).toUpperCase() + field.slice(1)} key={field}>

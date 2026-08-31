@@ -75,13 +75,19 @@ export default function StoryRelatedSeoStep({ form, setForm, allStories = [], cu
 
       <h3 style={{ margin: "28px 0 12px" }}>SEO</h3>
       <Field label="Meta Title">
-        <Input value={seo.title || ""} onChange={(e) => setSeo("title", e.target.value)} placeholder="20M Records a Year, Processed Without New Headcount" />
+        <Input value={seo.metaTitle || ""} onChange={(e) => setSeo("metaTitle", e.target.value)} placeholder="20M Records a Year, Processed Without New Headcount" />
       </Field>
       <Field label="Meta Description">
-        <Textarea rows={3} value={seo.description || ""} onChange={(e) => setSeo("description", e.target.value)} placeholder="How a regional health network automated medical record intake..." />
+        <Textarea rows={3} value={seo.metaDescription || ""} onChange={(e) => setSeo("metaDescription", e.target.value)} placeholder="How a regional health network automated medical record intake..." />
       </Field>
       <Field label="Keywords">
         <StringListEditor items={seo.keywords || []} onChange={(v) => setSeo("keywords", v)} placeholder="healthcare automation" addLabel="+ Add Keyword" emptyLabel="No keywords added." />
+      </Field>
+      <Field label="Canonical URL">
+        <Input value={seo.canonicalUrl || ""} onChange={(e) => setSeo("canonicalUrl", e.target.value)} placeholder="https://jjcsystems.com/success/story/your-slug" />
+      </Field>
+      <Field label="OG Image URL">
+        <Input value={seo.ogImage || ""} onChange={(e) => setSeo("ogImage", e.target.value)} placeholder="https://image-url" />
       </Field>
     </div>
   );

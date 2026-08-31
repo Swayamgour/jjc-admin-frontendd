@@ -30,6 +30,7 @@ import IndustryTechnologiesStep from "../components/industries/IndustryTechnolog
 import CaseStudiesStep from "../components/shared/sections/CaseStudiesStep";
 import FaqStep from "../components/shared/sections/FaqStep";
 import CtaStep from "../components/shared/sections/CtaStep";
+import SeoStep from "../components/shared/sections/SeoStep";
 export default function IndustryFormPage() {
 	const { slug } = useParams();
 	const isEdit = Boolean(slug);
@@ -50,6 +51,7 @@ export default function IndustryFormPage() {
 		"Case Studies",
 		"FAQs",
 		"CTA",
+		"SEO",
 	];
 
 	const [form, setForm] = useState({
@@ -140,6 +142,14 @@ export default function IndustryFormPage() {
 			description: "",
 			primaryLabel: "",
 			secondaryLabel: "",
+		},
+
+		seo: {
+			metaTitle: "",
+			metaDescription: "",
+			keywords: [],
+			canonicalUrl: "",
+			ogImage: "",
 		},
 	});
 	
@@ -257,6 +267,14 @@ export default function IndustryFormPage() {
 				primaryLabel: industry.cta?.primaryLabel || "",
 				secondaryLabel: industry.cta?.secondaryLabel || "",
 			},
+
+			seo: {
+				metaTitle: industry.seo?.metaTitle || "",
+				metaDescription: industry.seo?.metaDescription || "",
+				keywords: industry.seo?.keywords || [],
+				canonicalUrl: industry.seo?.canonicalUrl || "",
+				ogImage: industry.seo?.ogImage || "",
+			},
 		});
 	}, [industryData]);
 
@@ -366,6 +384,10 @@ export default function IndustryFormPage() {
 
 						{step === 10 && (
 							<CtaStep form={form} setForm={setForm}/>
+						)} 
+
+						{step === 11 && (
+							<SeoStep form={form} setForm={setForm}/>
 						)} 
 					</div>
 

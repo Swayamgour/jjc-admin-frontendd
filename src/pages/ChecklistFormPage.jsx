@@ -47,7 +47,8 @@ const EMPTY_FORM = {
   ctaBandPrimary: { text: "Talk through your result", link: "/contact" },
   ctaBandSecondary: { text: "Read the related guides", link: "/guides" },
 
-  isPublished: true, author: "JJC Systems", seoTitle: "", seoDescription: "",
+  isPublished: true, author: "JJC Systems",
+  seo: { metaTitle: "", metaDescription: "", keywords: [], canonicalUrl: "", ogImage: "" },
 };
 
 const STEPS = ["Basic Info", "Hero", "Why It Matters", "Checklist Sections", "Score Bands", "Gaps, CTA & SEO"];
@@ -68,7 +69,12 @@ export default function ChecklistFormPage() {
   useEffect(() => {
     if (!clData?.data) return;
     const c = clData.data;
-    setForm({ ...EMPTY_FORM, ...c, publishedAt: c.publishedAt ? c.publishedAt.slice(0, 10) : "" });
+    setForm({
+      ...EMPTY_FORM,
+      ...c,
+      publishedAt: c.publishedAt ? c.publishedAt.slice(0, 10) : "",
+      seo: { ...EMPTY_FORM.seo, ...(c.seo || {}) },
+    });
   }, [clData]);
 
   const handleSubmit = async () => {

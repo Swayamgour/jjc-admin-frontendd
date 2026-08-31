@@ -49,6 +49,8 @@ export const buildIndustryFormData = (form) => {
 
 	formData.append("cta", JSON.stringify(form.cta || {}));
 
+	formData.append("seo", JSON.stringify(form.seo || {}));
+
 	// Upload Hero Image
 	if (form.hero?.heroImage instanceof File) {
 		formData.append("heroImage", form.hero.heroImage);

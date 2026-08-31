@@ -46,7 +46,8 @@ const EMPTY_FORM = {
   ctaBandPrimary: { text: "Discuss this paper", link: "/contact" },
   ctaBandSecondary: { text: "Run the related checklist", link: "/checklists" },
 
-  isPublished: true, author: "JJC Systems", seoTitle: "", seoDescription: "",
+  isPublished: true, author: "JJC Systems",
+  seo: { metaTitle: "", metaDescription: "", keywords: [], canonicalUrl: "", ogImage: "" },
 };
 
 const STEPS = [
@@ -70,7 +71,12 @@ export default function WhitepaperFormPage() {
   useEffect(() => {
     if (!wpData?.data) return;
     const w = wpData.data;
-    setForm({ ...EMPTY_FORM, ...w, publishedAt: w.publishedAt ? w.publishedAt.slice(0, 10) : "" });
+    setForm({
+      ...EMPTY_FORM,
+      ...w,
+      publishedAt: w.publishedAt ? w.publishedAt.slice(0, 10) : "",
+      seo: { ...EMPTY_FORM.seo, ...(w.seo || {}) },
+    });
   }, [wpData]);
 
   const handleSubmit = async () => {

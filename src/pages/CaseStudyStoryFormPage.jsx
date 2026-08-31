@@ -63,7 +63,7 @@ const EMPTY_FORM = {
   relatedStoriesTitle: "",
   relatedStories: [],
 
-  seo: { title: "", description: "", keywords: [] },
+  seo: { metaTitle: "", metaDescription: "", keywords: [], canonicalUrl: "", ogImage: "" },
 
   status: "published",
 };

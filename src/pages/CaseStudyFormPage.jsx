@@ -62,6 +62,7 @@ const EMPTY_FORM = {
     metaDescription: "",
     keywords: [],
     canonicalUrl: "",
+    ogImage: "",
   },
 };
 

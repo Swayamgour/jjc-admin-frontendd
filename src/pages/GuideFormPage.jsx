@@ -50,7 +50,8 @@ const EMPTY_FORM = {
   ctaBandPrimary: { text: "Request a consultation", link: "/contact" },
   ctaBandSecondary: { text: "", link: "" },
 
-  isPublished: true, author: "JJC Systems", seoTitle: "", seoDescription: "",
+  isPublished: true, author: "JJC Systems",
+  seo: { metaTitle: "", metaDescription: "", keywords: [], canonicalUrl: "", ogImage: "" },
 };
 
 const STEPS = [
@@ -74,7 +75,12 @@ export default function GuideFormPage() {
   useEffect(() => {
     if (!guideData?.data) return;
     const g = guideData.data;
-    setForm({ ...EMPTY_FORM, ...g, publishedAt: g.publishedAt ? g.publishedAt.slice(0, 10) : "" });
+    setForm({
+      ...EMPTY_FORM,
+      ...g,
+      publishedAt: g.publishedAt ? g.publishedAt.slice(0, 10) : "",
+      seo: { ...EMPTY_FORM.seo, ...(g.seo || {}) },
+    });
   }, [guideData]);
 
   const handleSubmit = async () => {

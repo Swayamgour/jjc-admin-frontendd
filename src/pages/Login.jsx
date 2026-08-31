@@ -63,9 +63,9 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="login__hint">
+        {/* <p className="login__hint">
           Default: <code>admin@jjcsystems.com</code> / <code>Admin@JJC2026</code>
-        </p>
+        </p> */}
       </div>
     </div>
   );

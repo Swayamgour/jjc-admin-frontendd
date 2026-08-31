@@ -55,8 +55,13 @@ const EMPTY_FORM = {
   isPublished: true,
   author: "JJC Systems",
 
-  seoTitle: "",
-  seoDescription: "",
+  seo: {
+    metaTitle: "",
+    metaDescription: "",
+    keywords: [],
+    canonicalUrl: "",
+    ogImage: "",
+  },
 };
 
 const STEPS = ["Basic Info", "Hero", "Content", "SEO"];
@@ -112,6 +117,11 @@ export default function BlogForm() {
 
       breadcrumb:
         p.breadcrumb || EMPTY_FORM.breadcrumb,
+
+      seo: {
+        ...EMPTY_FORM.seo,
+        ...(p.seo || {}),
+      },
     });
   }, [blogData]);
 
@@ -195,13 +205,8 @@ export default function BlogForm() {
       /* ---------------- SEO ---------------- */
 
       formData.append(
-        "seoTitle",
-        form.seoTitle || ""
-      );
-
-      formData.append(
-        "seoDescription",
-        form.seoDescription || ""
+        "seo",
+        JSON.stringify(form.seo || {})
       );
 
       /* ---------------- FEATURE IMAGE ---------------- */

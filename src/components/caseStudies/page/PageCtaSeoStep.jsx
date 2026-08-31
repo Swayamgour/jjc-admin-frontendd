@@ -49,6 +49,9 @@ export default function PageCtaSeoStep({ form, setForm }) {
       <Field label="Canonical URL">
         <Input value={seo.canonicalUrl || ""} onChange={(e) => setSeo("canonicalUrl", e.target.value)} placeholder="https://jjcsystems.com/success/industry-healthcare" />
       </Field>
+      <Field label="OG Image URL">
+        <Input value={seo.ogImage || ""} onChange={(e) => setSeo("ogImage", e.target.value)} placeholder="https://image-url" />
+      </Field>
     </div>
   );
 }

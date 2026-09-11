@@ -130,14 +130,14 @@ export default function BlogForm() {
   const handleSubmit = async () => {
     if (
       !form.title ||
-      !form.description ||
-      !form.platform ||
-      !form.service ||
-      !form.industry ||
-      !form.type
+      !form.description
+      // !form.platform ||
+      // !form.service ||
+      // !form.industry ||
+      // !form.type
     ) {
       alert(
-        "Title, Description, Platform, Service, Industry and Type are required."
+        "Title and Description are required."
       );
 
       setStep(0);

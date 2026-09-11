@@ -19,7 +19,7 @@ export default function Topbar({ sidebarCollapsed, onMenuClick }) {
       </div>
       <div className="topbar__right">
         <a
-          href="http://localhost:3000"
+          href="https://www.jjcsystems.com/"
           target="_blank"
           rel="noreferrer"
           className="topbar__view-site"

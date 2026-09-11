@@ -17,7 +17,7 @@ export default function BlogBasicInfoStep({ form, setForm }) {
         <Field label="Title" required>
           <Input value={form.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="The oversharing problem your Copilot rollout will find first" />
         </Field>
-        <Field label="Slug" required hint="Auto generated from title">
+        <Field label="Slug"  hint="Auto generated from title">
           <Input value={form.slug || ""} onChange={(e) => { setManualSlug(true); set("slug", e.target.value); }} placeholder="copilot-oversharing-healthcare-sharepoint" />
         </Field>
       </div>
@@ -27,13 +27,13 @@ export default function BlogBasicInfoStep({ form, setForm }) {
       </Field>
 
       <div className="form-grid">
-        <Field label="Platform" required>
+        <Field label="Platform" >
           <Select value={form.platform || ""} onChange={(e) => set("platform", e.target.value)}>
             <option value="">Select platform</option>
             {BLOG_PLATFORMS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
           </Select>
         </Field>
-        <Field label="Service" required>
+        <Field label="Service" >
           <Select value={form.service || ""} onChange={(e) => set("service", e.target.value)}>
             <option value="">Select service</option>
             {BLOG_SERVICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -42,13 +42,13 @@ export default function BlogBasicInfoStep({ form, setForm }) {
       </div>
 
       <div className="form-grid">
-        <Field label="Industry" required>
+        <Field label="Industry" >
           <Select value={form.industry || ""} onChange={(e) => set("industry", e.target.value)}>
             <option value="">Select industry</option>
             {BLOG_INDUSTRIES.map((i) => <option key={i.value} value={i.value}>{i.label}</option>)}
           </Select>
         </Field>
-        <Field label="Type" required>
+        <Field label="Type" >
           <Select value={form.type || ""} onChange={(e) => set("type", e.target.value)}>
             <option value="">Select type</option>
             {BLOG_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}

@@ -78,15 +78,15 @@ function AuthChecker({ children }) {
     skip: !token,
   });
 
-  console.log("================================");
-  console.log("Token:", token);
-  console.log("isAuthenticated:", isAuthenticated);
-  console.log("data:", data);
-  console.log("isLoading:", isLoading);
-  console.log("isFetching:", isFetching);
-  console.log("isError:", isError);
-  console.log("error:", error);
-  console.log("================================");
+  // console.log("================================");
+  // console.log("Token:", token);
+  // console.log("isAuthenticated:", isAuthenticated);
+  // console.log("data:", data);
+  // console.log("isLoading:", isLoading);
+  // console.log("isFetching:", isFetching);
+  // console.log("isError:", isError);
+  // console.log("error:", error);
+  // console.log("================================");
 
 
   useEffect(() => {
@@ -243,7 +243,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <Provider store={store}>
-      <BrowserRouter basename="/admin">
+      <BrowserRouter basename="/adminlogin">
         <AuthChecker>
           <AppRoutes />
         </AuthChecker>

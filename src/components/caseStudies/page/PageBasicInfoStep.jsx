@@ -1,57 +1,90 @@
-import { Field, Input, Select } from "../../ui/UI";
+import { Field, Input, Textarea, Select, Checkbox } from "../../ui/UI";
 
-export default function PageBasicInfoStep({ form, setForm, categories = [], disabled }) {
-  const set = (key, value) => setForm({ ...form, [key]: value });
+const URL_SEGMENT = {
+  service: "services",
+  industry: "industries",
+  platform: "platforms",
+};
 
-  const filteredCategories = categories.filter((c) => c.type === form.sourceType);
+/* Backend basics: title, slug, badge, shortDescription, subCategory, order, isPublished.
+   - `category` is derived by the backend from the chosen subCategory (item), so there is no Category dropdown.
+   - `urlPath` is derived by the backend from the slug, shown here read-only. */
+
+export default function PageBasicInfoStep({ form, setForm, categories = [], type }) {
+  const set = (patch) => setForm({ ...form, ...patch });
+
+  const urlPreview = `/${URL_SEGMENT[type] || "pages"}/${form.slug || "your-slug"}`;
 
   return (
-    <div className="step-content">
-      <div className="grid-2">
-        <Field label="Name" required>
-          <Input value={form.name || ""} onChange={(e) => set("name", e.target.value)} placeholder="Healthcare Success Stories" disabled={disabled} />
-        </Field>
-        <Field label="Source Type" required>
-          <Select value={form.sourceType} onChange={(e) => setForm({ ...form, sourceType: e.target.value, parentSlug: "" })} disabled={disabled}>
-            <option value="industry">Industry</option>
-            <option value="capability">Capability</option>
-          </Select>
-        </Field>
-      </div>
+    <div className="form-grid">
+      <Field label="Title" required>
+        <Input
+          value={form.title || ""}
+          onChange={(e) => set({ title: e.target.value })}
+          placeholder="e.g. IT Strategy & Consulting"
+        />
+      </Field>
 
-      <Field label="Parent Category" required hint="Must match an existing Industry/Capability category of the selected type">
-        <Select value={form.parentSlug || ""} onChange={(e) => set("parentSlug", e.target.value)} disabled={disabled}>
-          <option value="">Select a category…</option>
-          {filteredCategories.map((c) => (
-            <option key={c._id} value={c.slug}>{c.name}</option>
+      <Field label="Badge">
+        <Input
+          value={form.badge || ""}
+          onChange={(e) => set({ badge: e.target.value })}
+          placeholder="e.g. Strategy & Transformation"
+        />
+      </Field>
+
+      <Field label="Slug" required hint={`Public URL: ${urlPreview}`}>
+        <Input
+          value={form.slug || ""}
+          onChange={(e) =>
+            set({
+              slug: e.target.value
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9-]/g, ""),
+            })
+          }
+          placeholder="it-strategy-consulting"
+        />
+      </Field>
+
+      <Field label="Short Description" required>
+        <Textarea
+          rows={3}
+          value={form.shortDescription || ""}
+          onChange={(e) => set({ shortDescription: e.target.value })}
+          placeholder="Shown in the mega menu and cards"
+        />
+      </Field>
+
+      <Field label="Sub Category" required>
+        <Select
+          value={form.subCategory || ""}
+          onChange={(e) => set({ subCategory: e.target.value })}
+        >
+          <option value="">Select Subcategory</option>
+          {categories.map((sub) => (
+            <option key={sub._id} value={sub._id}>
+              {sub.name}
+            </option>
           ))}
         </Select>
       </Field>
 
-      <Field label="Status">
-        <Select value={form.status || "published"} onChange={(e) => set("status", e.target.value)} disabled={disabled}>
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-        </Select>
+      <Field label="Order">
+        <Input
+          type="number"
+          value={form.order ?? 0}
+          onChange={(e) => set({ order: Number(e.target.value) })}
+        />
       </Field>
 
-      <Field label="Hero Image">
-        <input
-          type="file"
-          accept="image/*"
-          className="input"
-          onChange={(e) => set("heroImage", e.target.files?.[0] || null)}
-          disabled={disabled}
+      <Field label="Status">
+        <Checkbox
+          checked={Boolean(form.isPublished)}
+          onChange={(e) => set({ isPublished: e.target.checked })}
+          label={form.isPublished ? "Published" : "Draft (hidden from the site)"}
         />
-        {form.heroImage && (
-          <div style={{ marginTop: 12 }}>
-            <img
-              src={form.heroImage instanceof File ? URL.createObjectURL(form.heroImage) : form.heroImage.url}
-              alt="Hero Preview"
-              style={{ width: 240, borderRadius: 8, objectFit: "cover" }}
-            />
-          </div>
-        )}
       </Field>
     </div>
   );

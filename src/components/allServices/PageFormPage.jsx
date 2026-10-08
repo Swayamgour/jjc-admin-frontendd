@@ -10,127 +10,24 @@ import { buildPageFormData } from "../../utils/buildPageFormData";
 import {
 	TYPE_STEP_MAP,
 	TYPE_CATEGORY_SLUG,
-	SECTION_LIBRARY,
 	REQUIRED_FIELDS,
 	buildDefaultForm,
 	getStepLabel,
+	getSectionConfig,
 } from "../../utils/pageSectionsConfig";
 import { useGetAllItemByCategoryQuery } from "../../features/categories/categoryApi";
-import BasicInfoStep from "../services/BasicInfoStep";
+
 import HeroStep from "../services/HeroStep";
-import OverviewStep from "../shared/sections/OverviewStep";
 import SeoStep from "../shared/sections/SeoStep";
-import FaqStep from "../services/FaqStep";
-import DeliveryProcessStep from "../services/DeliveryProcessStep";
-import DynamicCardStep from "../services/DynamicCardStep";
 import SuccessStoriesStep from "../services/SuccessStoriesStep";
-import IndustryListStep from "./IndustryListStep";
-import CtaStep from "../services/CtaStep";
 
-// Field configurations for each section type
-const SECTION_FIELD_CONFIG = {
-	challenges: {
-		fields: ["title", "description"],
-		label: "Challenge",
-	},
-	sectorOverview: {
-		fields: ["title", "description"],
-		label: "Sector",
-	},
-	applicationLayer: {
-		fields: ["tag", "title", "description"],
-		label: "Application",
-	},
-	capabilities: {
-		fields: ["icon", "title", "description", "points"],
-		label: "Capability",
-	},
-	industryUseCases: {
-		fields: ["title", "description"],
-		label: "Use Case",
-	},
-	// outcomes: {
-	// 	arrayKey: "metrics",
-	// 	fields: ["label", "value", "description"],
-	// 	label: "Metric",
-	// },
-
-	outcomes: {
-		arrayKey: "metrics",
-		fields: [
-			"label",
-			"value",
-			"description",
-			"note",
-			"associatedTitle",
-			"associatedSubtitle",
-			"associatedItems",
-			"associatedNote",
-		],
-		label: "Metric",
-	},
-	pillars: {
-		fields: ["icon", "title", "description", "points"],
-		label: "Pillar",
-	},
-	taskBoard: {
-		arrayKey: "tasks",
-		fields: ["tag", "title", "description"],
-		label: "Task",
-	},
-	consultingServices: {
-		fields: ["tag", "title", "description"],
-		label: "Service",
-	},
-	appGrid: {
-		fields: ["tag", "title", "description"],
-		label: "Application",
-	},
-	whyUs: {
-		fields: ["icon", "title", "description", "points"],
-		label: "Reason",
-	},
-	successStories: {
-		arrayKey: "stories",
-		fields: [
-			"industry",
-			"title",
-			"summary",
-			"metrics",
-			"outcomes",
-			"ctaLink",
-		],
-		label: "Story",
-	},
-	insights: {
-		arrayKey: "posts",
-		fields: ["tag", "meta", "title", "description", "link"],
-		label: "Post",
-	},
-	cta: {
-		fields: ["title", "description", "primaryLabel", "primaryLink", "secondaryLabel", "secondaryLink", "note"],
-		label: "CTA",
-	},
-	// relatedItems: {
-	// 	fields: ["title", "description"],
-	// 	label: "Related Item",
-	// },
-
-	relatedItems: {
-		fields: [
-			"icon",
-			"title",
-			"description",
-			"link"
-		],
-		label: "Related Item",
-	},
-	approach: {
-		arrayKey: "steps",
-		fields: ["title", "description"],
-		label: "Step",
-	},
-};
+import PageBasicInfoStep from "../caseStudies/page/PageBasicInfoStep";
+import DefinitionStep from "./Definitionstep";
+import WhoForStep from "./Whoforstep";
+import MicrosoftPlatformsStep from "./Microsoftplatformsstep";
+import PageFaqStep from "./Pagefaqstep";
+import PageCtaStep from "./Pagectastep";
+import CardSectionStep from "./Cardsectionstep";
 
 function getByPath(obj, path) {
 	return path.split(".").reduce((acc, key) => (acc == null ? acc : acc[key]), obj);
@@ -141,6 +38,13 @@ function isEmptyValue(v) {
 	if (typeof v === "string") return v.trim() === "";
 	if (Array.isArray(v)) return v.length === 0;
 	return false;
+}
+
+function labelForType(type) {
+	if (type === "service") return "Service";
+	if (type === "industry") return "Industry";
+	if (type === "platform") return "Platform";
+	return type;
 }
 
 export default function PageFormPage({ type, listPath }) {
@@ -174,15 +78,31 @@ export default function PageFormPage({ type, listPath }) {
 		}
 	}, [type, isEdit]);
 
+	/* Edit mode: start from defaults, then lay the saved page on top, so
+	   pages saved before a section existed (e.g. no `faqs` yet) still get
+	   a complete, safe shape for every step. */
 	useEffect(() => {
 		if (!pageData?.data) return;
-		setForm((prev) => ({ ...prev, ...pageData.data, type }));
+		const defaults = buildDefaultForm(type);
+		const saved = pageData.data;
+
+		const merged = { ...defaults };
+		Object.keys(saved).forEach((key) => {
+			const d = defaults[key];
+			const s = saved[key];
+			// nested sections: keep default keys the saved doc doesn't have
+			merged[key] =
+				d && s && typeof d === "object" && !Array.isArray(d) && typeof s === "object" && !Array.isArray(s)
+					? { ...d, ...s }
+					: s;
+		});
+
+		setForm({ ...merged, type });
 	}, [pageData, type]);
 
 	function validateStep(stepKey) {
 		const rules = REQUIRED_FIELDS[stepKey];
 		if (!rules) return [];
-
 		return rules
 			.filter((rule) => isEmptyValue(getByPath(form, rule.path)))
 			.map((rule) => rule.label);
@@ -190,9 +110,7 @@ export default function PageFormPage({ type, listPath }) {
 
 	function validateAll() {
 		const missing = [];
-		stepKeys.forEach((key) => {
-			missing.push(...validateStep(key));
-		});
+		stepKeys.forEach((key) => missing.push(...validateStep(key)));
 		return [...new Set(missing)];
 	}
 
@@ -217,6 +135,17 @@ export default function PageFormPage({ type, listPath }) {
 			return;
 		}
 
+		/* FAQ rows need both fields (backend requires question + answer) */
+		const badFaq = (form.faqs?.items || []).findIndex(
+			(f) => !f.question?.trim() || !f.answer?.trim()
+		);
+		if (badFaq >= 0) {
+			setError(`FAQ #${badFaq + 1}: question and answer are both required`);
+			const faqIndex = stepKeys.indexOf("faqs");
+			if (faqIndex >= 0) setStep(faqIndex);
+			return;
+		}
+
 		try {
 			const formData = buildPageFormData(form);
 
@@ -230,113 +159,80 @@ export default function PageFormPage({ type, listPath }) {
 
 			navigate(listPath);
 		} catch (err) {
-			console.log(err);
+			console.error(err);
 			setError(err?.data?.message || "Something went wrong");
 		}
 	};
 
 	const isLoading = creating || updating || loadingPage;
 	const currentKey = stepKeys[step];
-	const currentSection = SECTION_LIBRARY[currentKey];
 
-	console.log(currentKey)
+	const setSectionValue = (key) => (value) => setForm((prev) => ({ ...prev, [key]: value }));
 
 	function renderStep() {
-		if (currentKey === "basicInfo") {
-			return <BasicInfoStep form={form} setForm={setForm} categories={categories} type={type} />;
-		}
-		if (currentKey === "hero") {
-			return <HeroStep form={form} setForm={setForm} />;
-		}
+		switch (currentKey) {
+			case "basicInfo":
+				return (
+					<PageBasicInfoStep
+						form={form}
+						setForm={setForm}
+						categories={categories}
+						type={type}
+					/>
+				);
 
-		if (currentKey === "overview") {
-			return <OverviewStep form={form} setForm={setForm} />;
-		}
-		if (currentKey === "seo") {
-			return <SeoStep form={form} setForm={setForm} />;
-		}
-		if (currentKey === "faqs") {
-			return <FaqStep form={form} setForm={setForm} />;
-		}
-		if (currentKey === "cta") {
-			return (
-				<CtaStep
-					section={form.cta || {}}
-					onChange={(value) =>
-						setForm({
-							...form,
-							cta: value,
-						})
-					}
-				/>
-			);
-		}
-		if (currentKey === "successStories") {
-			return (
-				<SuccessStoriesStep
-					title="Success Stories"
-					section={form.successStories || {}}
-					onChange={(v) =>
-						setForm({
-							...form,
-							successStories: v,
-						})
-					}
-				/>
-			);
-		}
+			case "hero":
+				return <HeroStep form={form} setForm={setForm} />;
 
-		const componentType = currentSection?.component;
+			case "seo":
+				return <SeoStep form={form} setForm={setForm} />;
 
-		console.log(componentType, currentSection)
+			case "definition":
+				return (
+					<DefinitionStep section={form.definition || {}} onChange={setSectionValue("definition")} />
+				);
 
-		if (componentType === "deliveryProcess") {
-			return (
-				<DeliveryProcessStep
-					form={form}
-					setForm={setForm}
-					sectionKey={currentKey}
-					label={getStepLabel(type, currentKey)}
-				/>
-			);
+			case "whoFor":
+				return <WhoForStep section={form.whoFor || {}} onChange={setSectionValue("whoFor")} />;
+
+			case "microsoftPlatforms":
+				return (
+					<MicrosoftPlatformsStep
+						section={form.microsoftPlatforms || {}}
+						onChange={setSectionValue("microsoftPlatforms")}
+					/>
+				);
+
+			case "faqs":
+				return <PageFaqStep section={form.faqs || {}} onChange={setSectionValue("faqs")} />;
+
+			case "cta":
+				return <PageCtaStep section={form.cta || {}} onChange={setSectionValue("cta")} />;
+
+			case "successStories":
+				return (
+					<SuccessStoriesStep
+						title="Success Stories"
+						section={form.successStories || {}}
+						onChange={setSectionValue("successStories")}
+					/>
+				);
+
+			default: {
+				const config = getSectionConfig(type, currentKey);
+				if (!config) {
+					return <p>No editor is configured for “{currentKey}”.</p>;
+				}
+				return (
+					<CardSectionStep
+						title={getStepLabel(type, currentKey)}
+						section={form[currentKey] || {}}
+						onChange={setSectionValue(currentKey)}
+						config={config}
+					/>
+				);
+			}
 		}
-
-		if (componentType === "industryList") {
-			return (
-				<IndustryListStep
-					form={form}
-					setForm={setForm}
-					sectionKey={currentKey}
-					label={getStepLabel(type, currentKey)}
-				/>
-			);
-		}
-
-		// Dynamic card sections with field configs
-		const config = SECTION_FIELD_CONFIG[currentKey];
-		if (config) {
-			return (
-				<DynamicCardStep
-					title={getStepLabel(type, currentKey)}
-					section={form[currentKey] || {}}
-					onChange={(v) => setForm({ ...form, [currentKey]: v })}
-					fields={config.fields}
-					cardLabel={config.label}
-					arrayKey={config.arrayKey || "items"}
-				/>
-			);
-		}
-
-		// Fallback for any other section
-		return (
-			<DynamicCardStep
-				title={getStepLabel(type, currentKey)}
-				section={form[currentKey] || {}}
-				onChange={(v) => setForm({ ...form, [currentKey]: v })}
-				fields={["title", "description"]}
-				cardLabel="Item"
-			/>
-		);
 	}
 
 	return (
@@ -362,14 +258,10 @@ export default function PageFormPage({ type, listPath }) {
 					</h2>
 
 					{error && (
-						<div style={{ color: "#dc2626", marginTop: 12, fontSize: 14 }}>
-							{error}
-						</div>
+						<div style={{ color: "#dc2626", marginTop: 12, fontSize: 14 }}>{error}</div>
 					)}
 
-					<div style={{ marginTop: 30 }}>
-						{renderStep()}
-					</div>
+					<div style={{ marginTop: 30 }}>{renderStep()}</div>
 
 					<div style={{ display: "flex", justifyContent: "space-between", marginTop: 40 }}>
 						<Btn variant="secondary" disabled={step === 0} onClick={() => goToStep(step - 1)}>
@@ -388,11 +280,4 @@ export default function PageFormPage({ type, listPath }) {
 			</div>
 		</div>
 	);
-}
-
-function labelForType(type) {
-	if (type === "service") return "Service";
-	if (type === "industry") return "Industry";
-	if (type === "platform") return "Platform";
-	return type;
 }

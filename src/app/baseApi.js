@@ -15,6 +15,7 @@ export const baseApi = createApi({
     },
   }),
   tagTypes: [
+    "Page", // NEW: pagesApi uses this tag. Without it the list never refreshes after create/update/delete
     "Services", "Platforms", "Solutions", "Industries",
     "Resources", "CaseStudies", "CaseStudyCategories", "CaseStudyStories", "Leads", "FAQs", "Testimonials",
     "Stats", "Nav", "HomeHero", "HomeSections",
